@@ -179,7 +179,14 @@ _get_menu:
 					until inkey$()="q"
 					gosub _setup_menu
 				endif
-				if pos=1 then gosub _game_options
+				if pos=1
+					gosub _game_options
+					menu=1
+					pos=0
+					repeat
+						gosub _fade_menu
+					until returnkey()=0
+				endif
 			else
 				if pos=0
 					fade=-1
