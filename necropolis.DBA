@@ -25,14 +25,14 @@ if anims=1 then play animation 1
 
 rem Wait some more
 if anims=1
-	repeat
-	until animation playing(1)=0 or inkey$()<>""
+   repeat
+   until animation playing(1)=0 or inkey$()<>""
 endif
 
 rem Delete the animation
 if anims=1 then delete animation 1
 for k=80 to 30 step -12
-	fade bitmap 0,k
+   fade bitmap 0,k
 next k
 
 gosub _main_program
@@ -40,26 +40,26 @@ end
 
 _main_program:
    rem Main loop
-	playgame=1
-	repeat
-		gosub _setup_menu
-		gosub _get_menu
-	until playgame=0
+   playgame=1
+   repeat
+      gosub _setup_menu
+      gosub _get_menu
+   until playgame=0
 return
 
 _setup_menu:
-	sync off
-	load bitmap "game-title.bmp"
-		rem menu selection variables
-	set text font "times"
-	set text size 27
-	fade=60
-	fadedir=0
-	menu=1
-	for pos=0 to 3
-		gosub _fade_menu
-	next pos
-	pos=0
+   sync off
+   load bitmap "game-title.bmp"
+      rem menu selection variables
+   set text font "times"
+   set text size 27
+   fade=60
+   fadedir=0
+   menu=1
+   for pos=0 to 3
+      gosub _fade_menu
+   next pos
+   pos=0
 return
 
 _play_game:
@@ -70,221 +70,221 @@ _play_game:
 
    sync rate 30
 
-	set text font "modern"
-	set text to bold
-	set text size 16
+   set text font "modern"
+   set text to bold
+   set text size 16
    pl_shield=100
-  	pl_life=100
+     pl_life=100
    pl_ammo=10
-  	pl_key=0
-	map_level=1
-	make=0
-	gosub _make_level
+     pl_key=0
+   map_level=1
+   make=0
+   gosub _make_level
 
    repeat
-  	   gosub _handle_player
-     	if map_level=1 then gosub _thunder
+        gosub _handle_player
+        if map_level=1 then gosub _thunder
       sync
-  	until pl_life=0
+     until pl_life=0
 
-	if object exist(96)
-		delete object 96
-		delete object 95
-	endif
-	if object exist(2) then delete object 2
-	if bg_sound=1 then set sound volume 1,0
-	if object exist(51) then delete object 51
-	if object exist(52) then delete object 52
+   if object exist(96)
+      delete object 96
+      delete object 95
+   endif
+   if object exist(2) then delete object 2
+   if bg_sound=1 then set sound volume 1,0
+   if object exist(51) then delete object 51
+   if object exist(52) then delete object 52
 
-	hide object 1
-	if object exist(2) then hide object 2
-	rem *** hide man shots
+   hide object 1
+   if object exist(2) then hide object 2
+   rem *** hide man shots
    for k=0 to 3
-		if object exist(160+k) then hide object 160+k
-	next k
-	rem *** hide zombie flesh
+      if object exist(160+k) then hide object 160+k
+   next k
+   rem *** hide zombie flesh
    for k=0 to 7
-		if object exist(150+k) then hide object 150+k
-	next k
-	rem *** hide monsters
+      if object exist(150+k) then hide object 150+k
+   next k
+   rem *** hide monsters
    for k=10 to monster_num+10
-		if object exist(k) then hide object k
-	next k
-	rem *** hide objects
+      if object exist(k) then hide object k
+   next k
+   rem *** hide objects
    for k=0 to object_num
-		if object exist(260+k) then hide object 260+k
-	next k
-	rem *** hide graves
-	for k=1 to grave_num
-		if object exist(100+k) then hide object 100+k
-	next k
-	rem *** hide spheres
+      if object exist(260+k) then hide object 260+k
+   next k
+   rem *** hide graves
+   for k=1 to grave_num
+      if object exist(100+k) then hide object 100+k
+   next k
+   rem *** hide spheres
    for k=0 to sphere_num
-		if object exist(k+300) then hide object k+300
-	next k
-	
-	sync off
-	load bitmap "game-title.bmp"
+      if object exist(k+300) then hide object k+300
+   next k
+   
+   sync off
+   load bitmap "game-title.bmp"
 
-	rem menu selection variables
-	set text font "times"
-	set text size 27
-	set text to normal
-	fade=60
-	fadedir=0
-	menu=1
-	for pos=0 to 3
-		gosub _fade_menu
-	next pos
-	pos=0
+   rem menu selection variables
+   set text font "times"
+   set text size 27
+   set text to normal
+   fade=60
+   fadedir=0
+   menu=1
+   for pos=0 to 3
+      gosub _fade_menu
+   next pos
+   pos=0
 return
 
 
 _get_menu:
-	repeat
-		gosub _fade_menu
-		if upkey()=1 and pos>0
-			fade=60
-			gosub _fade_menu
-			pos=pos-1
-			if pos=2 then pos=1
-			repeat
-				gosub _fade_menu
-			until upkey()=0
-		endif
-		if downkey()=1 and pos<3
-			fade=60
-			gosub _fade_menu
-			pos=pos+1
-			if pos=2 then pos=3
-			repeat
-				gosub _fade_menu
-			until downkey()=0
-		endif
-		if returnkey()=1
-			if menu=1
-				if pos=0
-					gosub _play_game
-					sync off
-					load bitmap "game-over.bmp"
-					sync off
-					if fg_sound=1
-						load sound "youdie.wav",107
-						play sound 107
-						repeat
-						until sound playing(107)=0
-						delete sound 107
-					endif
-					repeat
-					until inkey$()="q"
-					gosub _setup_menu
-				endif
-				if pos=1
-					gosub _game_options
-					menu=1
-					pos=0
-					repeat
-						gosub _fade_menu
-					until returnkey()=0
-				endif
-			else
-				if pos=0
-					fade=-1
-					fadedir=0
-					gosub _fade_menu
-					if sound$="Sound On"
-						sound$="Sound Off"
-						fg_sound=0
-						bg_sound=0
-					else
-						sound$="Sound On"
-						fg_sound=1
-						bg_sound=1
-					endif
-					repeat
-						gosub _fade_menu
-					until returnkey()=0
-				endif
-				if pos=1
-					fade=-1
-					fadedir=0
-					gosub _fade_menu
-					if keyb$="Keyboard"
-						keyb$="Keyboard + Joystick"
-						input_ctrl=1
-					else
-						keyb$="Keyboard"
-						input_ctrl=0
-					endif
-					repeat
-						gosub _fade_menu
-					until returnkey()=0
-				endif
-			endif
-		endif
-	until returnkey()=1 and pos=3
-	if menu=1 then playgame=0
+   repeat
+      gosub _fade_menu
+      if upkey()=1 and pos>0
+         fade=60
+         gosub _fade_menu
+         pos=pos-1
+         if pos=2 then pos=1
+         repeat
+            gosub _fade_menu
+         until upkey()=0
+      endif
+      if downkey()=1 and pos<3
+         fade=60
+         gosub _fade_menu
+         pos=pos+1
+         if pos=2 then pos=3
+         repeat
+            gosub _fade_menu
+         until downkey()=0
+      endif
+      if returnkey()=1
+         if menu=1
+            if pos=0
+               gosub _play_game
+               sync off
+               load bitmap "game-over.bmp"
+               sync off
+               if fg_sound=1
+                  load sound "youdie.wav",107
+                  play sound 107
+                  repeat
+                  until sound playing(107)=0
+                  delete sound 107
+               endif
+               repeat
+               until inkey$()="q"
+               gosub _setup_menu
+            endif
+            if pos=1
+               gosub _game_options
+               menu=1
+               pos=0
+               repeat
+                  gosub _fade_menu
+               until returnkey()=0
+            endif
+         else
+            if pos=0
+               fade=-1
+               fadedir=0
+               gosub _fade_menu
+               if sound$="Sound On"
+                  sound$="Sound Off"
+                  fg_sound=0
+                  bg_sound=0
+               else
+                  sound$="Sound On"
+                  fg_sound=1
+                  bg_sound=1
+               endif
+               repeat
+                  gosub _fade_menu
+               until returnkey()=0
+            endif
+            if pos=1
+               fade=-1
+               fadedir=0
+               gosub _fade_menu
+               if keyb$="Keyboard"
+                  keyb$="Keyboard + Joystick"
+                  input_ctrl=1
+               else
+                  keyb$="Keyboard"
+                  input_ctrl=0
+               endif
+               repeat
+                  gosub _fade_menu
+               until returnkey()=0
+            endif
+         endif
+      endif
+   until returnkey()=1 and pos=3
+   if menu=1 then playgame=0
 return
 
 _fade_menu:
-	if fade>245 then fadedir=0
-	if fade<100 then fadedir=1
-	if fadedir=1
-		fade=fade+7
-	else
-		fade=fade-7
-	endif
-	ink rgb(fade,0,0),0
-	if menu=1
-		if pos=0 then center text 320,205,"Play Game"
-		if pos=1 then center text 320,230,"Options"
-		if pos=3 then center text 320,280,"Quit Game"
-	else
-		if pos=0 then center text 320,205,sound$
-		if pos=1 then center text 320,230,keyb$
-		if pos=3 then center text 320,280,"Main Menu"
-	endif
+   if fade>245 then fadedir=0
+   if fade<100 then fadedir=1
+   if fadedir=1
+      fade=fade+7
+   else
+      fade=fade-7
+   endif
+   ink rgb(fade,0,0),0
+   if menu=1
+      if pos=0 then center text 320,205,"Play Game"
+      if pos=1 then center text 320,230,"Options"
+      if pos=3 then center text 320,280,"Quit Game"
+   else
+      if pos=0 then center text 320,205,sound$
+      if pos=1 then center text 320,230,keyb$
+      if pos=3 then center text 320,280,"Main Menu"
+   endif
 return
 
 _game_options:
-	fade=-7
-	for pos=0 to 3
-		gosub _fade_menu
-	next pos
-	fade=60
-	fadedir=0
-	menu=2
-	for pos=0 to 3
-		gosub _fade_menu
-	next pos
-	pos=0
+   fade=-7
+   for pos=0 to 3
+      gosub _fade_menu
+   next pos
+   fade=60
+   fadedir=0
+   menu=2
+   for pos=0 to 3
+      gosub _fade_menu
+   next pos
+   pos=0
 
-	gosub _get_menu
+   gosub _get_menu
 
-	fade=-7
-	for pos=0 to 3
-		gosub _fade_menu
-	next pos
-	fade=60
-	fadedir=0
-	menu=1
-	for pos=0 to 3
-		gosub _fade_menu
-	next pos
-	pos=1
+   fade=-7
+   for pos=0 to 3
+      gosub _fade_menu
+   next pos
+   fade=60
+   fadedir=0
+   menu=1
+   for pos=0 to 3
+      gosub _fade_menu
+   next pos
+   pos=1
 return
 
 _initialize:
-	rem *** menu commands
-	sound$="Sound On"
-	keyb$="Keyboard"
+   rem *** menu commands
+   sound$="Sound On"
+   keyb$="Keyboard"
 
-	setup=0
-	rem animations 0=off 1=on
-	anims=1
+   setup=0
+   rem animations 0=off 1=on
+   anims=1
 
-	rem 0=keyboard 1=joystick+keyboard
-	input_ctrl=0
+   rem 0=keyboard 1=joystick+keyboard
+   input_ctrl=0
 
    rem 0=full game 1=debugging on
    debug=0
@@ -305,7 +305,7 @@ _initialize:
    rem gun type 0=none 1=shotgun 2=sawnoff 3=chainsaw
    mangun=1
 
-	grave_max=28
+   grave_max=28
    grave_num=grave_max
    make=0
    map_level=1
@@ -319,15 +319,15 @@ _initialize:
    mapdata(1)=50 : mapdata(2)=50
    dim map(mapdata(1),mapdata(2))
 
-	rem ***** sphere data
-	sphere_max=7
+   rem ***** sphere data
+   sphere_max=7
    sphere_num=7
-	rem sphere type 0=silver/slow 1=gold/fast 2=red/deadly
-	sphere_type=0
+   rem sphere type 0=silver/slow 1=gold/fast 2=red/deadly
+   sphere_type=0
    dim sphere(sphere_max)
    dim spheredir(sphere_max)
    dim spheretexture(sphere_max)
-	rem respawn type 0=no respawn 1=respawn
+   rem respawn type 0=no respawn 1=respawn
    dim spheretype(sphere_max)
    dim spherespeed(sphere_max)
 
@@ -336,13 +336,13 @@ _initialize:
    rem object data
    obtex=0
    object_max=17
-	object_num=object_max
+   object_num=object_max
    dim objects(object_max)
    dim object_type(object_max)
 
    rem monster data
    monsterkill=0
-	monster_max=18
+   monster_max=18
    monster_num=18
    dim monster(monster_max)
    dim monsterdir(monster_max)
@@ -394,8 +394,8 @@ _load_sounds:
    load sound "health.wav",41
    load sound "shield.wav",42
    load sound "key.wav",43
-	load sound "sphere.wav",99
-	load sound "bang.wav",100
+   load sound "sphere.wav",99
+   load sound "bang.wav",100
 return
 
 rem decrease your shield and health
@@ -403,13 +403,13 @@ _man_hit:
    if sound playing(5)
    else
       if fg_sound=1 then play sound 5
-	   if pl_shield>0
-   	   pl_shield=pl_shield-hitpoints-hitpoints-(map_level-1)
-      	if pl_shield<0 then pl_shield=0
-	   else
-   	   pl_life=pl_life-hitpoints-(map_level-1)
-      	if pl_life<0 then pl_life=0
-	   endif
+      if pl_shield>0
+         pl_shield=pl_shield-hitpoints-hitpoints-(map_level-1)
+         if pl_shield<0 then pl_shield=0
+      else
+         pl_life=pl_life-hitpoints-(map_level-1)
+         if pl_life<0 then pl_life=0
+      endif
    endif
 return
 
@@ -464,10 +464,10 @@ _move_shots:
                   mz=object position z(300+l)
                   if sx>mx-10 and sx<mx+10 and sz>mz-10 and sz<mz+10
                      hide object 300+l
-							hide object 160+k
+                     hide object 160+k
                      manshot(k)=0
-							sphere(l)=0
-							if fg_sound=1 then play sound 100
+                     sphere(l)=0
+                     if fg_sound=1 then play sound 100
                   endif
                endif
             next l
@@ -504,14 +504,14 @@ _handle_player:
        if rightkey()=1 or (joystick right()=1 and input_ctrl=1) then yrotate object 1,wrapvalue(object angle y(1)+6) : animstate=2
    endif
 
-	nxtlvl=0
+   nxtlvl=0
    if (spacekey()=1 and debug=1) then nxtlvl=1
-	if pl_key>0 and map_level>1
+   if pl_key>0 and map_level>1
       dx=object position x(1)-object position x(401)
       dz=object position z(1)-object position z(401)
       if dx>-50 and dx<50 and dz>-50 and dz<50 then nxtlvl=1
-	endif
-	if nxtlvl=1
+   endif
+   if nxtlvl=1
       map_level=map_level+1
       make=0
       gosub _make_level
@@ -625,15 +625,15 @@ remstart
                if obj<99 or sphere_radar=2 then box mx,my-1,mx+1,my
             endif
          next obj
-		endif
+      endif
 remend
       rem copy bitmap to object for screen
       get image 5,0,0,200,200
       texture object 51,5
       set current bitmap 0
-	endif
+   endif
 
-	inside=checkinside(cx#,cz#)
+   inside=checkinside(cx#,cz#)
    while inside=1 and cdis#<250
        cdis#=cdis#+1
        cx#=newxvalue(object position x(1),ca#,cdis#)
@@ -816,24 +816,24 @@ remend
                   if fg_sound=1 then play sound 43
                   load image "status2.bmp",204
                   old_life=0
-						if map_level>1
-							for mmz=0 to 50
-								for mmx=0 to 50
-									if map(mmx,mmz)=30 then map(mmx,mmz)=1
-								next mmx
-							next mmz
-							if wall_texture=1
-								load image "wall10.bmp",400
-							else
-								if wall_texture=2
-									load image "wall17.bmp",400
-								else
-									load image "wall12.bmp",400
-								endif
-							endif
-							texture object 400,400
-							set object 400,1,0,0
-						endif
+                  if map_level>1
+                     for mmz=0 to 50
+                        for mmx=0 to 50
+                           if map(mmx,mmz)=30 then map(mmx,mmz)=1
+                        next mmx
+                     next mmz
+                     if wall_texture=1
+                        load image "wall10.bmp",400
+                     else
+                        if wall_texture=2
+                           load image "wall17.bmp",400
+                        else
+                           load image "wall12.bmp",400
+                        endif
+                     endif
+                     texture object 400,400
+                     set object 400,1,0,0
+                  endif
                endif
                if object_type(k)=3
                   pl_shield=pl_shield+15
@@ -863,46 +863,46 @@ remend
    gosub _move_sphere
 
    for k=0 to sphere_num
-		sv=-1
+      sv=-1
       if sphere(k)>0
          dx=object position x(k+300)-cx#
          dz=object position z(k+300)-cz#
          if dx+dz<2000
-				if dx+dz<901
-					ss=int((901-(dx+dz))/12)
-					if ss>sv then sv=ss
-				endif
-				ay=wrapvalue(atanfull(dx,dz))
-           	rotate object k+300,0,ay,0
-           	rem Texture direction of decal
-           	angle=300+(wrapvalue(object angle y(1) - spheredir(k))/30)
-           	if angle<>spheretexture(k)
+            if dx+dz<901
+               ss=int((901-(dx+dz))/12)
+               if ss>sv then sv=ss
+            endif
+            ay=wrapvalue(atanfull(dx,dz))
+              rotate object k+300,0,ay,0
+              rem Texture direction of decal
+              angle=300+(wrapvalue(object angle y(1) - spheredir(k))/30)
+              if angle<>spheretexture(k)
                texture object k+300,angle
                spheretexture(k)=angle
-           	endif
-	         dx=object position x(1)-object position x(300+k)
-   	      dz=object position z(1)-object position z(300+k)
-      	   if dx>-20 and dx<20 and dz>-20 and dz<20
-         	   rem ***** sphere got me
-   	         hitpoints=int(map_level/3)
-				   if pl_shield>0
-			   	   pl_shield=pl_shield-hitpoints
-			      	if pl_shield<0 then pl_shield=0
-				   else
-			   	   pl_life=pl_life-hitpoints
-			      	if pl_life<0 then pl_life=0
-				   endif
-         	endif
+              endif
+            dx=object position x(1)-object position x(300+k)
+            dz=object position z(1)-object position z(300+k)
+            if dx>-20 and dx<20 and dz>-20 and dz<20
+               rem ***** sphere got me
+               hitpoints=int(map_level/3)
+               if pl_shield>0
+                  pl_shield=pl_shield-hitpoints
+                  if pl_shield<0 then pl_shield=0
+               else
+                  pl_life=pl_life-hitpoints
+                  if pl_life<0 then pl_life=0
+               endif
+            endif
          endif
       endif
-		if sv>-1 and fg_sound=1
-			if sound playing(99)
-			else
-				loop sound 99
-			endif
-			if sv>60 then sv=60
-			set sound volume 99,sv
-		endif
+      if sv>-1 and fg_sound=1
+         if sound playing(99)
+         else
+            loop sound 99
+         endif
+         if sv>60 then sv=60
+         set sound volume 99,sv
+      endif
    next k
 
    if memo_num>0
@@ -957,16 +957,16 @@ return
 
 _make_level:
    rem **** setup level differences
-	if map_level=4 and fg_sound=1
-		load sound "tallman1.wav",101
-		play sound 101
-		repeat
-		until sound playing(101)=0
-		delete sound 101
-	endif
-	maptype=0
-	if map_level=4 or map_level=7 or map_level=8 or map_level=12 then maptype=1
-	if map_level>12 then maptype=rnd(2)
+   if map_level=4 and fg_sound=1
+      load sound "tallman1.wav",101
+      play sound 101
+      repeat
+      until sound playing(101)=0
+      delete sound 101
+   endif
+   maptype=0
+   if map_level=4 or map_level=7 or map_level=8 or map_level=12 then maptype=1
+   if map_level>12 then maptype=rnd(2)
    if object exist(2) then hide object 2
    if monsterkill>59 then map_radar=1
    if monsterkill>80 then sphere_radar=1
@@ -976,43 +976,43 @@ _make_level:
    if map_level<6 then zombietype=rnd(1)
    if map_level<3 then zombietype=0
 
-	if map_level<4
-		sphere_num=-1
-	else
-		if map_level>15
-			spn=sphere_max
-		else
-			spn=(int(map_level-4)/4)*4
-			spn=(((map_level-4)-spn)*2)+1
-		endif
-		if spn>sphere_max then spn=sphere_max
-		sphere_num=spn
-	endif
-		
-	montype=0
-	if map_level<3 or map_level=5 or map_level=10 then montype=1
-	if map_level>12 or map_level=3 or map_level=9 then montype=2
-	if map_level=4 or map_level=11 or map_level=12 or map_level=7 then montype=-1
-	if map_level<13
-		monster_num=monster_max-(7-int(map_level/2))
-	else
-		monster_num=monster_max
-	endif
-	if montype=-1 then monster_num=0
+   if map_level<4
+      sphere_num=-1
+   else
+      if map_level>15
+         spn=sphere_max
+      else
+         spn=(int(map_level-4)/4)*4
+         spn=(((map_level-4)-spn)*2)+1
+      endif
+      if spn>sphere_max then spn=sphere_max
+      sphere_num=spn
+   endif
+      
+   montype=0
+   if map_level<3 or map_level=5 or map_level=10 then montype=1
+   if map_level>12 or map_level=3 or map_level=9 then montype=2
+   if map_level=4 or map_level=11 or map_level=12 or map_level=7 then montype=-1
+   if map_level<13
+      monster_num=monster_max-(7-int(map_level/2))
+   else
+      monster_num=monster_max
+   endif
+   if montype=-1 then monster_num=0
 
-	rem **** setup textures
-	gosub _setup_textures
+   rem **** setup textures
+   gosub _setup_textures
 
-	if map_level=2
-		if object exist(401)
-		else
-			make object plain 401,128,128
-		endif
-		load image "spgate.bmp",402
-		texture object 401,402
-		set object 401,1,0,0
-		hide object 401
-	endif
+   if map_level=2
+      if object exist(401)
+      else
+         make object plain 401,128,128
+      endif
+      load image "spgate.bmp",402
+      texture object 401,402
+      set object 401,1,0,0
+      hide object 401
+   endif
     rem Size of map
     mapx=mapdata(1)
     mapz=mapdata(2)
@@ -1035,7 +1035,7 @@ _make_level:
        map(24,24)=3
     endif
 
-	rem ** Fog 80=normal dark, 100=spacegate white
+   rem ** Fog 80=normal dark, 100=spacegate white
    if map_level=1
       set ambient light 100
    else
@@ -1074,12 +1074,12 @@ _make_level:
       monstertexture(k-10)=20
       monsterobject(k-10)=-1
       monsterpos(k-10)=0
-		ms=int(map_level/2)
-		if ms<2 then ms=2
+      ms=int(map_level/2)
+      if ms<2 then ms=2
       monsterspeed(k-10)=ms
       monsterstep(k-10)=ms
-		monstertype(k-10)=montype
-		if montype=2 then monstertype(k-10)=rnd(1)
+      monstertype(k-10)=montype
+      if montype=2 then monstertype(k-10)=rnd(1)
       monsterhit(k-10)=monstertype(k-10)+2
       monstercount(k-10)=0
       monsterdie(k-10)=0
@@ -1112,11 +1112,11 @@ _make_level:
          load sound "wind.wav",1
          set sound speed 1,1500
       endif
-		if anims=1
-	      repeat
-   	   until animation playing(1)=0 or inkey$()<>""
-      	delete animation 1
-		endif
+      if anims=1
+         repeat
+         until animation playing(1)=0 or inkey$()<>""
+         delete animation 1
+      endif
       sync on
       if bg_sound=1 then loop sound 1
    endif
@@ -1128,8 +1128,8 @@ _make_level:
        gosub _make_status
    else
       position object 1,(manx*300)+150,0,(manz*300)+150
-		show object 400
-		show object 401
+      show object 400
+      show object 401
    endif
    show object 1
    show object 2
@@ -1151,22 +1151,22 @@ _make_level:
       if objects(k)=1 then show object 260+k
    next k
    show object 52
-	setup=1
+   setup=1
 return
 
 _make_graves:
    if map_level=1 or maptype=1
-		if map_level=1
-	      load bitmap "graves.bmp",29
-		else
-	      for t=1 to grave_max
-   	      hide object t+100
-      	next t
-			delete image 9
-			delete image 10
-			delete image 11
-			load bitmap "statues3.bmp",29
-		endif
+      if map_level=1
+         load bitmap "graves.bmp",29
+      else
+         for t=1 to grave_max
+            hide object t+100
+         next t
+         delete image 9
+         delete image 10
+         delete image 11
+         load bitmap "statues3.bmp",29
+      endif
       get image 9,0,0,127,255
       get image 10,128,0,255,255
       get image 11,256,0,382,255
@@ -1234,13 +1234,13 @@ return
 
 _make_player:
     rem Load model and append animation data
-	if setup=0
-	    load object "idle.x",1 : tf1=total object frames(1)
-   	 append object "walk.x",1,1+tf1 : tf2=total object frames(1)
-	    yrotate object 1,180
-   	 fix object pivot 1
-	    hide object 1
-	endif
+   if setup=0
+       load object "idle.x",1 : tf1=total object frames(1)
+       append object "walk.x",1,1+tf1 : tf2=total object frames(1)
+       yrotate object 1,180
+       fix object pivot 1
+       hide object 1
+   endif
 return
 
 _make_map:
@@ -1255,8 +1255,8 @@ _make_map:
          next x
       else
          rx=25 : rz=25 : map(rx,rz)=1
-			brx=rx
-			brz=rz
+         brx=rx
+         brz=rz
          for t=0 to 300
              if rnd(1)=0
                  if rnd(1)=0 then rx=rx-1 else rx=rx+1
@@ -1270,44 +1270,44 @@ _make_map:
          manx=rx
          manz=rz
 
-			rem *** spacegate code 1
-			x=1
-			z=1
-			ck_on=checkmap(1,1)
-			spacegate=0
+         rem *** spacegate code 1
+         x=1
+         z=1
+         ck_on=checkmap(1,1)
+         spacegate=0
 
-			if ck_on=1
-				repeat
-					z=z+1
-					ck=checkmap(x,z)
-					if ck=0
-						spacegate=1
-						z=z-1
-					endif
-				until (spacegate=1) or (z>45)
-			endif
+         if ck_on=1
+            repeat
+               z=z+1
+               ck=checkmap(x,z)
+               if ck=0
+                  spacegate=1
+                  z=z-1
+               endif
+            until (spacegate=1) or (z>45)
+         endif
 
-			if spacegate=0
-				z=1
+         if spacegate=0
+            z=1
 
-				repeat
-					x=x+1
-					ck=checkmap(x,z)
-					if ck<>ck_on then	spacegate=1
-					if spacegate=0
-						if x>46
-							x=1
-							z=z+1
-						endif
-						x1=x
-						z1=z	
-					endif
-				until spacegate=1
-				x=x1
-				z=z1
-			endif
+            repeat
+               x=x+1
+               ck=checkmap(x,z)
+               if ck<>ck_on then   spacegate=1
+               if spacegate=0
+                  if x>46
+                     x=1
+                     z=z+1
+                  endif
+                  x1=x
+                  z1=z   
+               endif
+            until spacegate=1
+            x=x1
+            z=z1
+         endif
 
-			gosub _make_spacegate
+         gosub _make_spacegate
       endif
    else
       size=4
@@ -1389,7 +1389,7 @@ _make_map:
          if spacegate=0 then z=z+1
       until spacegate=1
 
-		gosub _make_spacegate
+      gosub _make_spacegate
 
       rem **** texture wals
       for x=1 to 49
@@ -1410,7 +1410,7 @@ _make_map:
             gosub _check_pos
          next y
       next x
-	endif
+   endif
 return
 
 _make_spacegate:
@@ -1419,8 +1419,8 @@ _make_spacegate:
       map(x+1,z+2)=30
       map(x+2,z+1)=30
       map(x+2,z+2)=30
-		position object 401,(x+2)*300,80,(z+2)*300
-		hide object 401
+      position object 401,(x+2)*300,80,(z+2)*300
+      hide object 401
 
       rx=-1
       rz=-1
@@ -1531,12 +1531,12 @@ _show_map_make:
       stop sound 1
       delete sound 1
       sync off
-		if anims=1
-	      load animation "level1.avi",1
-   	   place animation 1,129,110,510,370
-      	load bitmap "entering.bmp",0
-	      play animation 1
-		endif
+      if anims=1
+         load animation "level1.avi",1
+         place animation 1,129,110,510,370
+         load bitmap "entering.bmp",0
+         play animation 1
+      endif
    endif
    make=make+1
 return
@@ -1711,7 +1711,7 @@ _make_walls:
                if maptype=1
                   if map(rx,rz)=30
                      sg1=addwall(rx,rz,8,sg1,voffset)
-							add_door(rx,rz)
+                     add_door(rx,rz)
                   endif
                   if map(rx,rz)=1 or map(rx,rz)=31
                       if rnd(3)=1
@@ -1726,7 +1726,7 @@ _make_walls:
                               limb=addwall(rx,rz,3,limb,voffset)
                           endif
                       endif
-							 map(rx,rz)=1
+                      map(rx,rz)=1
                   endif
                else
                   if map(rx,rz)=1 or map(rx,rz)=2 or map(rx,rz)=31
@@ -1743,7 +1743,7 @@ _make_walls:
                   endif
                   if map(rx,rz)=30
                      sg1=addwall(rx,rz,8,sg1,voffset)
-							add_door(rx,rz)
+                     add_door(rx,rz)
                   endif
                endif
             endif
@@ -1796,11 +1796,11 @@ _setup_textures:
     if map_level=1
       load image "grass08.bmp",1
     else
-		if maptype=0
-	      load image "floor01.bmp",1
-		else
-	      load image "stone-bottom.bmp",1
-		endif
+      if maptype=0
+         load image "floor01.bmp",1
+      else
+         load image "stone-bottom.bmp",1
+      endif
       load image "floor02.bmp",201
     endif
 
@@ -1808,72 +1808,72 @@ _setup_textures:
     if map_level=1
        load image "ceiling02.bmp",3
     else
-		if maptype=0
-	       load image "ceiling01.bmp",3
-		else
-	       load image "stone-top.bmp",3
-		endif
+      if maptype=0
+          load image "ceiling01.bmp",3
+      else
+          load image "stone-top.bmp",3
+      endif
        load image "white-ceiling.bmp",202
     endif
 
     rem Wall textures
     wall_texture=rnd(2)
-	 if maptype=0
-	    if wall_texture=1
-   	   load image "wall01.bmp",2
-	    else
-			if wall_texture=2
-	   	   load image "wall13.bmp",2
-			else
-		      load image "wall06.bmp",2
-			endif
-	    endif
-	 else
-		catacombe=catacombe+1
-		if catacombe=2 then catacombe=0
-		if catacombe=0
-			load image "stone01.bmp",2
-		else
-			load image "sand01.bmp",2
-		endif
-	 endif
+    if maptype=0
+       if wall_texture=1
+         load image "wall01.bmp",2
+       else
+         if wall_texture=2
+            load image "wall13.bmp",2
+         else
+            load image "wall06.bmp",2
+         endif
+       endif
+    else
+      catacombe=catacombe+1
+      if catacombe=2 then catacombe=0
+      if catacombe=0
+         load image "stone01.bmp",2
+      else
+         load image "sand01.bmp",2
+      endif
+    endif
 
     if map_level=1
        load image "wall05.bmp",7
     else
       load image "bar-white.bmp",203
-		if maptype=0
-	      if wall_texture=1
-   	      load image "wall02.bmp",7
-      	else
-				if wall_texture=2
-	         	load image "wall14.bmp",7
-				else
-		         load image "wall07.bmp",7
-				endif
-	      endif
-		endif
+      if maptype=0
+         if wall_texture=1
+            load image "wall02.bmp",7
+         else
+            if wall_texture=2
+               load image "wall14.bmp",7
+            else
+               load image "wall07.bmp",7
+            endif
+         endif
+      endif
     endif
 
-	if maptype=0
-	    if wall_texture=1
-   	    load image "wall03.bmp",8
-	    else
-			if wall_texture=2
-				load image "wall15.bmp",8
-			else
-				load image "wall08.bmp",8
-			endif
-	    endif
-	else
-		if catacombe=0
-			if map_level>1 then load image "stone02.bmp",7
-			load image "stone03.bmp",8
-		else
-			if map_level>1 then load image "sand02.bmp",7
-			load image "sand03.bmp",8
-		endif
-	endif
+   if maptype=0
+       if wall_texture=1
+          load image "wall03.bmp",8
+       else
+         if wall_texture=2
+            load image "wall15.bmp",8
+         else
+            load image "wall08.bmp",8
+         endif
+       endif
+   else
+      if catacombe=0
+         if map_level>1 then load image "stone02.bmp",7
+         load image "stone03.bmp",8
+      else
+         if map_level>1 then load image "sand02.bmp",7
+         load image "sand03.bmp",8
+      endif
+   endif
 
    rem zombie
    if zombietype=1
@@ -1943,10 +1943,10 @@ _setup_textures:
          hide object k
       next k
 
-		if object exist(96)
-			delete object 96
-			delete object 95
-		endif
+      if object exist(96)
+         delete object 96
+         delete object 95
+      endif
       load object "house-frnt.x",96
       load object "house-side.x",95
       scale object 96,300,300,240
@@ -1965,52 +1965,52 @@ _setup_textures:
    endif
    rem ****  load sphere bitmap
 
-	if map_level<8
-	   load bitmap "sphere1.bmp",31
-		sphere_type=0
-	else
-		if map_level<12
-		   load bitmap "sphere2.bmp",31
-			sphere_type=1
-		else
-		   load bitmap "sphere3.bmp",31
-			sphere_type=2
-		endif
-	endif
-  	for t=0 to 11
-     	get image t+300,0,t*64,146,(t*64)+63
+   if map_level<8
+      load bitmap "sphere1.bmp",31
+      sphere_type=0
+   else
+      if map_level<12
+         load bitmap "sphere2.bmp",31
+         sphere_type=1
+      else
+         load bitmap "sphere3.bmp",31
+         sphere_type=2
+      endif
+   endif
+     for t=0 to 11
+        get image t+300,0,t*64,146,(t*64)+63
    next t
-  	delete bitmap 31
+     delete bitmap 31
 
    for k=0 to sphere_max
-		if setup=0 then make object plain k+300,49,21
-     	position object k+300,-10000,-10000,-10000
+      if setup=0 then make object plain k+300,49,21
+        position object k+300,-10000,-10000,-10000
       set object k+300,1,0,1
-  	   spheredir(k)=90
-     	texture object k+300,300
+        spheredir(k)=90
+        texture object k+300,300
       spheretexture(k)=300
-  	   hide object k+300
+        hide object k+300
       sphere(k)=0
-  	next k
+     next k
 return
 
 _monster_position:
    for k=10 to monster_num+10
       if monster(k-10)>0 and monsterdie(k-10)=0
-			x=object position x(k)
-			z=object position z(k)
-			xm=x-(int(x/300)*300)
-			zm=z-(int(z/300)*300)
-			mx=object position x(1)/300
-			mz=object position z(1)/300
-			trn=0
-			if xm>60 and xm<240 and zm>60 and zm<240 then trn=1
+         x=object position x(k)
+         z=object position z(k)
+         xm=x-(int(x/300)*300)
+         zm=z-(int(z/300)*300)
+         mx=object position x(1)/300
+         mz=object position z(1)/300
+         trn=0
+         if xm>60 and xm<240 and zm>60 and zm<240 then trn=1
 
-			if trn=1 and rnd(15)=1
-				monster_turn(k,x,z,mx,mz,0)
-			else
-				mpos=0
-				if abs(mx-(x/300))<6 and abs(mz-(z/300))<6
+         if trn=1 and rnd(15)=1
+            monster_turn(k,x,z,mx,mz,0)
+         else
+            mpos=0
+            if abs(mx-(x/300))<6 and abs(mz-(z/300))<6
                if monsterspeed(k-10)>monsterstep(k-10)
                   monsterspeed(k-10)=monsterspeed(k-10)-1
                endif
@@ -2021,44 +2021,44 @@ _monster_position:
                endif
             endif
 
-				y=object position y(k)
+            y=object position y(k)
             if monsterdir(k-10)=0
-					if map(x/300,(z-60)/300)=1
-						position object k,x,y,z-monsterspeed(k-10)
-						mpos=1
-					endif
+               if map(x/300,(z-60)/300)=1
+                  position object k,x,y,z-monsterspeed(k-10)
+                  mpos=1
+               endif
             endif
             if monsterdir(k-10)=90
-					if map((x+60)/300,z/300)=1
-	               position object k,x+monsterspeed(k-10),y,z
-						mpos=1
-					endif
+               if map((x+60)/300,z/300)=1
+                  position object k,x+monsterspeed(k-10),y,z
+                  mpos=1
+               endif
             endif
             if monsterdir(k-10)=180
-					if map(x/300,(z+60)/300)=1
-	               position object k,x,y,z+monsterspeed(k-10)
-						mpos=1
-					endif
+               if map(x/300,(z+60)/300)=1
+                  position object k,x,y,z+monsterspeed(k-10)
+                  mpos=1
+               endif
             endif
             if monsterdir(k-10)=270
-					if map((x-60)/300,z/300)=1
-	               position object k,x-monsterspeed(k-10),y,z
-						mpos=1
-					endif
+               if map((x-60)/300,z/300)=1
+                  position object k,x-monsterspeed(k-10),y,z
+                  mpos=1
+               endif
             endif
-				if mpos=0 then monster_turn(k,x,z,mx,mz,0)
-			endif
+            if mpos=0 then monster_turn(k,x,z,mx,mz,0)
+         endif
       endif
    next k
 return
 
 function monster_turn(k,x,z,mx,mz,t)
-	mpx=x
-	mpz=z
-	x=x/300
-	z=z/300
-	if t=0
-		d=-1
+   mpx=x
+   mpz=z
+   x=x/300
+   z=z/300
+   if t=0
+      d=-1
       if abs(mx-x)<4 and abs(mz-z)<4
          if mx<x and map((mpx-60)/300,z)=1 then d=270
          if d=-1 and map((mpx+60)/300,z)=1 and mx>x then d=90
@@ -2066,71 +2066,71 @@ function monster_turn(k,x,z,mx,mz,t)
          if d=-1 and map(x,(mpz+60)/300)=1 and mz>z then d=180
       endif
 
-		if d=-1
-			repeat
-				dr=rnd(3)
-      	   if dr=0 and map(x-1,z)=1 then d=270
-         	if dr=1 and map(x+1,z)=1 then d=90
-	         if dr=2 and map(x,z-1)=1 then d=0
-   	      if dr=3 and map(x,z+1)=1 then d=180
-			until d>-1
-		endif
-		monsterdir(k-10)=d
-	else
-	endif
+      if d=-1
+         repeat
+            dr=rnd(3)
+            if dr=0 and map(x-1,z)=1 then d=270
+            if dr=1 and map(x+1,z)=1 then d=90
+            if dr=2 and map(x,z-1)=1 then d=0
+            if dr=3 and map(x,z+1)=1 then d=180
+         until d>-1
+      endif
+      monsterdir(k-10)=d
+   else
+   endif
 endfunction
 
 _sphere_position:
-	for k=0 to sphere_num
-		if sphere_type=0
-	     	spherespeed(k)=9+rnd(3)
-		else
-			if sphere_type=1
-		     	spherespeed(k)=13+rnd(3)
-			else
-		     	spherespeed(k)=17+rnd(3)
-			endif
-		endif
-		sphere(k)=1
-		repeat
-			x=rnd(47)+1
-			z=rnd(47)+1
-		until map(x,z)=1
-		position object k+300,(x*300)+150,360,(z*300)+150
-		show object k+300
-	next k
+   for k=0 to sphere_num
+      if sphere_type=0
+           spherespeed(k)=9+rnd(3)
+      else
+         if sphere_type=1
+              spherespeed(k)=13+rnd(3)
+         else
+              spherespeed(k)=17+rnd(3)
+         endif
+      endif
+      sphere(k)=1
+      repeat
+         x=rnd(47)+1
+         z=rnd(47)+1
+      until map(x,z)=1
+      position object k+300,(x*300)+150,360,(z*300)+150
+      show object k+300
+   next k
 return
 
 _move_sphere:
    for k=0 to sphere_num
       if sphere(k)>0
-			if object position y(300+k)>155
-				position object 300+k,object position x(300+k),(object position y(300+k))-1,object position z(300+k)
-			else
-	         dx=object position x(300+k)-object position x(1)
-   	      dz=object position z(300+k)-object position z(1)
-      	   if dx+dz<1300
-         	   point object 300+k,object position x(1),155,object position z(1)
-            	sp=wrapvalue(((object angle y(300+k)/30)*30)+180)
-	            spheredir(k)=sp
-   	      else
-      	      yrotate object 300+k,wrapvalue(spheredir(k)+180)
-         	endif
-	         move object 300+k,30
-   	      x=(object position x(300+k))/300
-      	   z=(object position z(300+k))/300
-         	if map(x,z)=1
-            	if map(x-1,z)=1 and map(x+1,z)=1 and map(x,z+1)=1 and map(x,z-1)=1 and rnd(3)=1
-               	  move object 300+k,-30
-	               spheredir(k)=wrapvalue(spheredir(k)-30)
-   	         else
-      	         move object 300+k,spherespeed(k)-30
-         	   endif
-	         else
-   	         move object 300+k,-30
-      	      spheredir(k)=wrapvalue(spheredir(k)+30)
-         	endif
-			endif
+         if object position y(300+k)>155
+            position object 300+k,object position x(300+k),(object position y(300+k))-1,object position z(300+k)
+         else
+            dx=object position x(300+k)-object position x(1)
+            dz=object position z(300+k)-object position z(1)
+            if dx+dz<1300
+               point object 300+k,object position x(1),155,object position z(1)
+               sp=wrapvalue(((object angle y(300+k)/30)*30)+180)
+               spheredir(k)=sp
+            else
+               yrotate object 300+k,wrapvalue(spheredir(k)+180)
+            endif
+            move object 300+k,30
+            x=(object position x(300+k))/300
+            z=(object position z(300+k))/300
+            if map(x,z)=1
+               if map(x-1,z)=1 and map(x+1,z)=1 and map(x,z+1)=1 and map(x,z-1)=1 and rnd(3)=1
+                    move object 300+k,-30
+                  spheredir(k)=wrapvalue(spheredir(k)-30)
+               else
+                  move object 300+k,spherespeed(k)-30
+               endif
+            else
+               move object 300+k,-30
+               spheredir(k)=wrapvalue(spheredir(k)+30)
+            endif
+         endif
       endif
    next k
 return
@@ -2165,38 +2165,38 @@ function addwall(rx,rz,objid,limbid,voffset)
 endfunction limbid
 
 function add_door(rx,rz)
-	if object exist(400)
-	else
-		make object plain 400,302,302
-	endif
-	if wall_texture=1
-		load image "wall09.bmp",400
-	else
-		if wall_texture=2
-			load image "wall16.bmp",400
-		else
-			load image "wall11.bmp",400
-		endif
-	endif
-	texture object 400,400
+   if object exist(400)
+   else
+      make object plain 400,302,302
+   endif
+   if wall_texture=1
+      load image "wall09.bmp",400
+   else
+      if wall_texture=2
+         load image "wall16.bmp",400
+      else
+         load image "wall11.bmp",400
+      endif
+   endif
+   texture object 400,400
 
-	if (map(rx,rz+1)>0 and map(rx,rz+1)<5) or map(rx,rz+1)=31
-		position object 400,(rx*300)+150,155,(rz*300)+300
-	endif
-	if (map(rx+1,rz)>0 and map(rx+1,rz)<5) or map(rx+1,rz)=31
-		position object 400,(rx*300),155,(rz*300)
-	endif
+   if (map(rx,rz+1)>0 and map(rx,rz+1)<5) or map(rx,rz+1)=31
+      position object 400,(rx*300)+150,155,(rz*300)+300
+   endif
+   if (map(rx+1,rz)>0 and map(rx+1,rz)<5) or map(rx+1,rz)=31
+      position object 400,(rx*300),155,(rz*300)
+   endif
 
-	if (map(rx,rz-1)>0 and map(rx,rz-1)<5) or map(rx,rz-1)=31
-		rotate object 400,0,0,0
-		position object 400,(rx*300)+150,155,(rz*300)
-	endif
-	if (map(rx-1,rz)>0 and map(rx-1,rz)<5) or map(rx-1,rz)=31
-		rotate object 400,0,0,0
-		position object 400,(rx*300),155,(rz*300)+150
-	endif
-	set object 400,1,1,0
-	hide object 400
+   if (map(rx,rz-1)>0 and map(rx,rz-1)<5) or map(rx,rz-1)=31
+      rotate object 400,0,0,0
+      position object 400,(rx*300)+150,155,(rz*300)
+   endif
+   if (map(rx-1,rz)>0 and map(rx-1,rz)<5) or map(rx-1,rz)=31
+      rotate object 400,0,0,0
+      position object 400,(rx*300),155,(rz*300)+150
+   endif
+   set object 400,1,1,0
+   hide object 400
 endfunction limbid
 
 rem Ensure player stays within floorplan

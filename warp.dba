@@ -1,20 +1,20 @@
 Rem ***** Included Source File *****
 
 function _init_warp(snd)
-	 if snd=1
-	    load sound "warp.wav",28
-   	 clone sound 29,28
-	    clone sound 30,28
-   	 set sound speed 28,(rnd(80)*100)+8000
-	    set sound speed 29,(rnd(80)*100)+8000
-   	 set sound speed 30,(rnd(80)*100)+8000
-	    set sound pan 28,0
-   	 set sound pan 29,-10000
-	    set sound pan 30,10000
-	 endif
+    if snd=1
+       load sound "warp.wav",28
+       clone sound 29,28
+       clone sound 30,28
+       set sound speed 28,(rnd(80)*100)+8000
+       set sound speed 29,(rnd(80)*100)+8000
+       set sound speed 30,(rnd(80)*100)+8000
+       set sound pan 28,0
+       set sound pan 29,-10000
+       set sound pan 30,10000
+    endif
     load image "plasma.bmp",89
     make object cylinder 93,100
-	 hide object 93
+    hide object 93
 
     scale object 93,100,2500,100
 
@@ -26,51 +26,51 @@ endfunction
 function _start_warp(snd)
     color backdrop rgb(0,0,0)
     rotate object 93,90,0,0
-	 position object 94,0,0,1000
-	 position object 93,0,0,0
-	 position camera 0,0,-1250
-	 point camera 0,0,0
-	 if snd=1
-	    play sound 28
-   	 play sound 29
-	    play sound 30
-	 endif
-	 show object 93
-	 show object 94
+    position object 94,0,0,1000
+    position object 93,0,0,0
+    position camera 0,0,-1250
+    point camera 0,0,0
+    if snd=1
+       play sound 28
+       play sound 29
+       play sound 30
+    endif
+    show object 93
+    show object 94
     sync on
 endfunction
 
 function _do_warp(snd)
     scroll object texture 93,-0.003,-0.015
-	 if snd=1
-	    if sound playing(28)
-   	 else
-      	  set sound pan 28,-2500+rnd(5000)
-	        set sound speed 28,(rnd(80)*100)+8000
-   	     play sound 28
-	    endif
-   	 if sound playing(29)
-	    else
-   	     set sound pan 29,-10000+rnd(5000)
-      	  set sound speed 29,(rnd(80)*100)+8000
-	        play sound 29
-   	 endif
-	    if sound playing(30)
-   	 else
-      	  set sound pan 30,5000+rnd(5000)
-	        set sound speed 30,(rnd(80)*100)+8000
-   	     play sound 30
-	    endif
-	 endif
+    if snd=1
+       if sound playing(28)
+       else
+           set sound pan 28,-2500+rnd(5000)
+           set sound speed 28,(rnd(80)*100)+8000
+           play sound 28
+       endif
+       if sound playing(29)
+       else
+           set sound pan 29,-10000+rnd(5000)
+           set sound speed 29,(rnd(80)*100)+8000
+           play sound 29
+       endif
+       if sound playing(30)
+       else
+           set sound pan 30,5000+rnd(5000)
+           set sound speed 30,(rnd(80)*100)+8000
+           play sound 30
+       endif
+    endif
     sync
 endfunction
 
 function _stop_warp(snd)
-	 if snd=1
-    	 stop sound 28
-	    stop sound 29
-   	 stop sound 30
-	 endif
+    if snd=1
+       stop sound 28
+       stop sound 29
+       stop sound 30
+    endif
     hide object 93
     hide object 94
 endfunction
