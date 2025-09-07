@@ -5,13 +5,13 @@ project name=Necropolis
 
 ; **** source file information ****
 main=necropolis.dba
-LineMain=1750
+LineMain=53
 include1=warp.dba
 LineInclude1=25
 
 ; **** Executable Information  ***
 ; build types: exe, media, installer, alone
-executable=Application.exe
+executable=Necropolis.exe
 build type=exe
 ; ** Media file compression **
 compression=NO
@@ -40,7 +40,7 @@ window resolution=640x480
 
 ; **** Media ****
 ; Example entries: media1=graphics\*.jpg
-media root path=C:\Users\danie\DBP\Projects\Necropolis\
+media root path=C:\Users\danie\Git\necropolis\
 
 ; **** Icons ****
 
@@ -48,11 +48,11 @@ media root path=C:\Users\danie\DBP\Projects\Necropolis\
 
 ; **** Version Info ****
 VerComments=
-VerCompany=
-VerFileDesc=
-VerFileNumber=v1.0
-VerInternal=v1.0
-VerCopyright=
+VerCompany=mavrick
+VerFileDesc=Necropolis
+VerFileNumber=v2.0
+VerInternal=v2.0
+VerCopyright=(C)2001 mavrick
 VerTrademark=
 VerFilename=
 VerProduct=
