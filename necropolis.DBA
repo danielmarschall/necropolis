@@ -68,6 +68,8 @@ _play_game:
    hide mouse
    sync on
 
+   sync rate 30
+
 	set text font "modern"
 	set text to bold
 	set text size 16
