@@ -2133,7 +2133,7 @@ rem add walls to object
 function addwall(rx,rz,objid,limbid,voffset)
     if map(rx,rz+1)=0
         add limb objid,limbid,1
-        rotate limb objid,limbid,0,0,0
+        rotate limb objid,limbid,0,180,0
         offset limb objid,limbid,(rx*300)+150,voffset,(rz*300)+300
         limbid=limbid+1
     endif
@@ -2145,7 +2145,7 @@ function addwall(rx,rz,objid,limbid,voffset)
     endif
     if map(rx+1,rz)=0
         add limb objid,limbid,1
-        rotate limb objid,limbid,0,90,0
+        rotate limb objid,limbid,0,270,0
         offset limb objid,limbid,(rx*300)+300,voffset,(rz*300)+150
         limbid=limbid+1
     endif
