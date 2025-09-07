@@ -1,6 +1,10 @@
 rem mavrick designs www.mavrick.co.uk
+rem Taken from the DB Demo CD, dated source code 24.01.2001
+rem Fixed by Daniel Marschall 07.09.2025 to make it compatible with DB Pro
+rem https://github.com/danielmarschall/necropolis
 
-#include "warp.dba"
+rem Must not use #include, because DarkBASIC Pro IDE already includes it
+rem #include "warp.dba"
 
 set display mode 640,480,16
 
@@ -470,7 +474,7 @@ _move_zombie_flesh:
             rotate object 150+k,0,monstershotdir(k),0
          endif
          move object 150+k,-30
-         if map((object position x(150+k))/300,(object position z(150+k))/300)<>1
+         if map(int((object position x(150+k))/300),int((object position z(150+k))/300))<>1
             hide object 150+k
             monstershot(k)=0
          endif
@@ -693,7 +697,7 @@ remend
                      zp=object position z(k)
                      position object monsterobjectnum(k-10)+260,xp,30,zp
                      objects(monsterobjectnum(k-10))=1
-                     object_type(monsterobjectnum(k-10)=monsterobject(k-10)
+                     object_type(monsterobjectnum(k-10))=monsterobject(k-10)
                      show object monsterobjectnum(k-10)+260
                   endif
                   monsterdie(k-10)=0
@@ -1309,15 +1313,15 @@ _make_map:
       manx=rx
       manz=rz
       map(rx,rz)=1
-      dir=0
+      direction=0
 
       for k=0 to rand_size*5
          length=rnd(length_size)*2
          for l=1 to length
-            if dir=0 then rx=rx+1
-            if dir=1 then rx=rx-1
-            if dir=2 then rz=rz+1
-            if dir=3 then rz=rz-1
+            if direction=0 then rx=rx+1
+            if direction=1 then rx=rx-1
+            if direction=2 then rz=rz+1
+            if direction=3 then rz=rz-1
             if rx=0
               if l-((l/2)*2)<>0 then rx=3 else rx=2
             endif
@@ -1333,9 +1337,9 @@ _make_map:
             map(rx,rz)=1
           next l
          repeat
-            dir=rnd(4)
-         until dir<>old_dir
-         old_dir=dir
+            direction=rnd(4)
+         until direction<>old_dir
+         old_dir=direction
       next k
       brx=rx
       brz=rz
@@ -2223,9 +2227,9 @@ endfunction
 rem return zero if location out of floorplan
 function checkinside(cx#,cz#)
     inside=1
-    if map(cx#/300,cz#/300)<>1 then inside=0
-    if map((cx#-10)/300,cz#/300)<>1 then inside=0
-    if map((cx#+10)/300,cz#/300)<>1 then inside=0
-    if map(cx#/300,(cz#-10)/300)<>1 then inside=0
-    if map(cx#/300,(cz#+10)/300)<>1 then inside=0
+    if map(int(cx#/300),int(cz#/300))<>1 then inside=0
+    if map(int((cx#-10)/300),int(cz#/300))<>1 then inside=0
+    if map(int((cx#+10)/300),int(cz#/300))<>1 then inside=0
+    if map(int(cx#/300),int((cz#-10)/300))<>1 then inside=0
+    if map(int(cx#/300),int((cz#+10)/300))<>1 then inside=0
 endfunction inside
