@@ -8,7 +8,8 @@ rem ---
 rem Must not use #include, because DarkBASIC Pro IDE already includes it
 rem #include "warp.dba"
 
-set display mode 640,480,16
+rem Fix: Changed from 16 to 32 bits, because 16 bits is not supported by some hardware, such as AMD Radeon HD 7350
+set display mode 640,480,32
 
 gosub _initialize
 _init_warp(fg_sound)
