@@ -16,30 +16,34 @@ _init_warp(fg_sound)
 gosub _load_sounds
 
 hide mouse
+sync off
 
 if anims=1
-   sync off
+   load image "test.bmp",999
    load animation "jl-phantasm.avi",1
     
    rem Place your AVI near the top left corner of the screen
    place animation 1,170,145,470,335
      
    rem Will play your AVI animation
-   load bitmap "test.bmp",0
+   paste image 999,0,0
+
    play animation 1
     
    rem Wait some more
    repeat
-      rem Fix: We need to reload it (+ 2 syncs double buffering because of video), otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
-      load bitmap "test.bmp",0
+      rem Fix: We need to reload it (+ 2 syncs double buffering because of video), otherwise it flickers with DBPro
+      paste image 999,0,0
       sync : sync
    until animation playing(1)=0 or inkey$()<>""
     
    rem Delete the animation
    delete animation 1
-   for k=80 to 30 step -12
-      fade bitmap 0,k
-   next k
+   rem Fading is not easily possible with IMAGE
+   rem for k=80 to 30 step -12
+   rem    fade bitmap 0,k
+   rem next k
+   delete image 999
 endif
 
 gosub _main_program
@@ -56,7 +60,8 @@ return
 
 _setup_menu:
    sync off
-   load bitmap "game-title.bmp"
+   load image "game-title.bmp",999
+   paste image 999,0,0
    rem menu selection variables
    set text font "times"
    set text size 27
@@ -129,7 +134,8 @@ _play_game:
    next k
    
    sync off
-   load bitmap "game-title.bmp"
+   load image "game-title.bmp",999
+   paste image 999,0,0
    
    rem menu selection variables
    set text font "times"
@@ -169,20 +175,21 @@ _get_menu:
             if pos=0
                gosub _play_game
                sync off
-               load bitmap "game-over.bmp"
+               load image "game-over.bmp",999
+               paste image 999,0,0
                sync off
                if fg_sound=1
                   load sound "youdie.wav",107
                   play sound 107
                   repeat
-                      rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
-                      load bitmap "game-over.bmp"
+                      rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help
+                      paste image 999,0,0
                   until sound playing(107)=0
                   delete sound 107
                endif
                repeat
-                   rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
-                   load bitmap "game-over.bmp"
+                   rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help
+                   paste image 999,0,0
                until inkey$()="q"
                gosub _setup_menu
             endif
@@ -234,8 +241,8 @@ _get_menu:
 return
 
 _fade_menu:
-   rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
-   load bitmap "game-title.bmp"
+   rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help.
+   paste image 999,0,0
    
    if fade>245 then fadedir=0
    if fade<100 then fadedir=1
@@ -1120,10 +1127,9 @@ _make_level:
       endif
       if anims=1
          repeat
-            rem TODO: THIS DOES NOT WORK! It worked for the intro animation, but not for this one. Still extreme flickering
             rem Fix: We need to reload it (+ 2 syncs double buffering because of video), otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
-            rem load bitmap "entering.bmp",0
-            rem sync : sync
+            paste image 999,0,0
+            sync : sync
          until animation playing(1)=0 or inkey$()<>""
          delete animation 1
       endif
@@ -1531,7 +1537,8 @@ endfunction chk
 _show_map_make:
    if map_level=1
       rem Fix: Previously, we only loaded the bitmap when make=0. Now, we need to reload it, otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
-      load bitmap "game-load.bmp"
+      load image "game-load.bmp",999
+      paste image 999,0,0
       ink rgb(255,0,0),0
       box 90,359,90+(make*3.68),370
       sync
@@ -1540,14 +1547,21 @@ _show_map_make:
       stop sound 1
       delete sound 1
       sync off
+
+      rem TODO: the animation flickers extremely. it has something to do with the game stage
+      rem       if we'd put this animation code at the beginning (where the intro videos is)
+      rem       then everything is fine
+      
       if anims=1
          load animation "level1.avi",1
          place animation 1,129,110,510,370
-         load bitmap "entering.bmp",0
+         load image "entering.bmp",999
+         paste image 999,0,0
          play animation 1
       else
          rem Fix: Added picture for those who won't have animations
-         load bitmap "entering.bmp",0
+         load image "entering.bmp",999
+         paste image 999,0,0
       endif
    endif
    make=make+1
