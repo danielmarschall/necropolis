@@ -5,7 +5,7 @@ project name=Necropolis
 
 ; **** source file information ****
 main=necropolis.dba
-LineMain=53
+LineMain=1130
 include1=warp.dba
 LineInclude1=25
 
@@ -27,7 +27,7 @@ CLI=NO
 CommandLineArguments=
 
 ; **** display mode information ****
-app title=Dark Basic Pro Project
+app title=Necropolis
 
 ; graphics mode options: fullscreen, window, desktop, fulldesktop, hidden
 graphics mode=window
@@ -40,18 +40,18 @@ window resolution=640x480
 
 ; **** Media ****
 ; Example entries: media1=graphics\*.jpg
-media root path=C:\Users\danie\Git\necropolis\
+media root path=D:\Git\necropolis\
 
 ; **** Icons ****
 
 ; **** Cursors ****
 
 ; **** Version Info ****
-VerComments=
+VerComments=Bugfixes by Daniel Marschall 2025
 VerCompany=mavrick
 VerFileDesc=Necropolis
-VerFileNumber=v2.0
-VerInternal=v2.0
+VerFileNumber=v1.0
+VerInternal=v1.0
 VerCopyright=(C)2001 mavrick
 VerTrademark=
 VerFilename=

@@ -1,7 +1,9 @@
 rem mavrick designs www.mavrick.co.uk
 rem Taken from the DB Demo CD, dated source code 24.01.2001
-rem Fixed by Daniel Marschall 07.09.2025 to make it compatible with DB Pro
+rem Fixed by Daniel Marschall 08 Sep 2025 to make it compatible with DB Pro
 rem https://github.com/danielmarschall/necropolis
+
+rem ---
 
 rem Must not use #include, because DarkBASIC Pro IDE already includes it
 rem #include "warp.dba"
@@ -12,28 +14,32 @@ gosub _initialize
 _init_warp(fg_sound)
 gosub _load_sounds
 
-sync off
-if anims=1 then load animation "jl-phantasm.avi",1
-
-rem Place your AVI near the top left corner of the screen
-if anims=1 then place animation 1,170,145,470,335
- 
-rem Will play your AVI animation
 hide mouse
-load bitmap "test.bmp",0
-if anims=1 then play animation 1
 
-rem Wait some more
 if anims=1
+   sync off
+   load animation "jl-phantasm.avi",1
+    
+   rem Place your AVI near the top left corner of the screen
+   place animation 1,170,145,470,335
+     
+   rem Will play your AVI animation
+   load bitmap "test.bmp",0
+   play animation 1
+    
+   rem Wait some more
    repeat
+      rem Fix: We need to reload it (+ 2 syncs double buffering because of video), otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
+      load bitmap "test.bmp",0
+      sync : sync
    until animation playing(1)=0 or inkey$()<>""
+    
+   rem Delete the animation
+   delete animation 1
+   for k=80 to 30 step -12
+      fade bitmap 0,k
+   next k
 endif
-
-rem Delete the animation
-if anims=1 then delete animation 1
-for k=80 to 30 step -12
-   fade bitmap 0,k
-next k
 
 gosub _main_program
 end
@@ -50,16 +56,14 @@ return
 _setup_menu:
    sync off
    load bitmap "game-title.bmp"
-      rem menu selection variables
+   rem menu selection variables
    set text font "times"
    set text size 27
    fade=60
    fadedir=0
    menu=1
-   for pos=0 to 3
-      gosub _fade_menu
-   next pos
    pos=0
+   gosub _fade_menu
 return
 
 _play_game:
@@ -74,18 +78,18 @@ _play_game:
    set text to bold
    set text size 16
    pl_shield=100
-     pl_life=100
+   pl_life=100
    pl_ammo=10
-     pl_key=0
+   pl_key=0
    map_level=1
    make=0
    gosub _make_level
 
    repeat
-        gosub _handle_player
-        if map_level=1 then gosub _thunder
+      gosub _handle_player
+      if map_level=1 then gosub _thunder
       sync
-     until pl_life=0
+   until pl_life=0
 
    if object exist(96)
       delete object 96
@@ -125,7 +129,7 @@ _play_game:
    
    sync off
    load bitmap "game-title.bmp"
-
+   
    rem menu selection variables
    set text font "times"
    set text size 27
@@ -133,10 +137,8 @@ _play_game:
    fade=60
    fadedir=0
    menu=1
-   for pos=0 to 3
-      gosub _fade_menu
-   next pos
    pos=0
+   gosub _fade_menu
 return
 
 
@@ -172,10 +174,14 @@ _get_menu:
                   load sound "youdie.wav",107
                   play sound 107
                   repeat
+                      rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
+                      load bitmap "game-over.bmp"
                   until sound playing(107)=0
                   delete sound 107
                endif
                repeat
+                   rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
+                   load bitmap "game-over.bmp"
                until inkey$()="q"
                gosub _setup_menu
             endif
@@ -227,6 +233,9 @@ _get_menu:
 return
 
 _fade_menu:
+   rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
+   load bitmap "game-title.bmp"
+   
    if fade>245 then fadedir=0
    if fade<100 then fadedir=1
    if fadedir=1
@@ -236,42 +245,38 @@ _fade_menu:
    endif
    ink rgb(fade,0,0),0
    if menu=1
-      if pos=0 then center text 320,205,"Play Game"
-      if pos=1 then center text 320,230,"Options"
-      if pos=3 then center text 320,280,"Quit Game"
+      if pos=0 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
+      center text 320,205,"Play Game"
+      if pos=1 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
+      center text 320,230,"Options"
+      if pos=3 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
+      center text 320,280,"Quit Game"
    else
-      if pos=0 then center text 320,205,sound$
-      if pos=1 then center text 320,230,keyb$
-      if pos=3 then center text 320,280,"Main Menu"
+      if pos=0 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
+      center text 320,205,sound$
+      if pos=1 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
+      center text 320,230,keyb$
+      if pos=3 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
+      center text 320,280,"Main Menu"
    endif
 return
 
 _game_options:
    fade=-7
-   for pos=0 to 3
-      gosub _fade_menu
-   next pos
    fade=60
    fadedir=0
    menu=2
-   for pos=0 to 3
-      gosub _fade_menu
-   next pos
    pos=0
+   gosub _fade_menu
 
    gosub _get_menu
 
    fade=-7
-   for pos=0 to 3
-      gosub _fade_menu
-   next pos
    fade=60
    fadedir=0
    menu=1
-   for pos=0 to 3
-      gosub _fade_menu
-   next pos
    pos=1
+   gosub _fade_menu
 return
 
 _initialize:
@@ -1114,6 +1119,10 @@ _make_level:
       endif
       if anims=1
          repeat
+            rem TODO: THIS DOES NOT WORK! It worked for the intro animation, but not for this one. Still extreme flickering
+            rem Fix: We need to reload it (+ 2 syncs double buffering because of video), otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
+            rem load bitmap "entering.bmp",0
+            rem sync : sync
          until animation playing(1)=0 or inkey$()<>""
          delete animation 1
       endif
@@ -1520,10 +1529,9 @@ endfunction chk
 
 _show_map_make:
    if map_level=1
-      if make=0
-         load bitmap "game-load.bmp"
-         ink rgb(255,0,0),0
-      endif
+      rem Fix: Previously, we only loaded the bitmap when make=0. Now, we need to reload it, otherwise it flickers with DBPro. Sync does not help. TODO: Is there another solution to avoid repeated disk-access?
+      load bitmap "game-load.bmp"
+      ink rgb(255,0,0),0
       box 90,359,90+(make*3.68),370
       sync
    endif
@@ -1536,6 +1544,9 @@ _show_map_make:
          place animation 1,129,110,510,370
          load bitmap "entering.bmp",0
          play animation 1
+      else
+         rem Fix: Added picture for those who won't have animations
+         load bitmap "entering.bmp",0
       endif
    endif
    make=make+1
