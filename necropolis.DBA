@@ -1158,11 +1158,10 @@ _make_level:
    rem ** Place player
    rem TODO: HUD size breaks on update
    load image "status.bmp",204
+   position object 1,(manx*300)+150,0,(manz*300)+150
    if map_level=1
-       position object 1,(28*300)+150,0,(28*300)+150
        gosub _make_status
    else
-      position object 1,(manx*300)+150,0,(manz*300)+150
       show object 400
       show object 401
    endif
@@ -1289,6 +1288,8 @@ _make_map:
                map(x,z)=1
             next z
          next x
+         manx=28
+         manz=28
       else
          rx=25 : rz=25 : map(rx,rz)=1
          brx=rx
@@ -1627,10 +1628,10 @@ _make_status:
    scale object 52,100,200,0
    lock object on 52
    position object 52,0,-440,800
+   old_life=-1
+   old_ammo=-1
+   old_shield=-1
    gosub _show_status
-   old_life=pl_life
-   old_ammo=pl_ammo
-   old_shield=pl_shield
 return
 
 _make_floorplan:
