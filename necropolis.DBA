@@ -1,6 +1,6 @@
 rem mavrick designs www.mavrick.co.uk
-rem Taken from the DB Demo CD, dated source code 24.01.2001
-rem Fixed by Daniel Marschall 08 Sep 2025 to make it compatible with DB Pro
+rem Taken from the DB Demo CD, dated source code 24 January 2001
+rem Fixed by Daniel Marschall 09 Sep 2025 to make it compatible with DB Pro
 rem https://github.com/danielmarschall/necropolis
 
 rem ---
@@ -1001,6 +1001,7 @@ _make_level:
       load sound "tallman1.wav",101
       play sound 101
       repeat
+         sync
       until sound playing(101)=0
       delete sound 101
    endif
