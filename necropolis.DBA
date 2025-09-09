@@ -208,16 +208,14 @@ _get_menu:
                if fg_sound=1
                   load sound "youdie.wav",107
                   play sound 107
-                  repeat
-                      rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help
-                      paste image 999,0,0
-                  until sound playing(107)=0
-                  delete sound 107
                endif
                repeat
                    rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help
                    paste image 999,0,0
                until inkey$()="q"
+               if fg_sound=1
+                  delete sound 107
+               endif
                gosub _setup_menu
             endif
             if pos=1
