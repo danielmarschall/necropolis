@@ -728,7 +728,7 @@ remend
            ay=wrapvalue(atanfull(dx,dz))
            rotate object k,0,ay,0
            rem Texture direction of decal
-           rem *** monster dieing texture
+           rem *** monster dying texture
            if monsterdie(k-10)=1
                monsterhit(k-10)=monsterhit(k-10)+1
                if monsterhit(k-10)=124
@@ -740,7 +740,7 @@ remend
                   if monsterobject(k-10)>-1
                      xp=object position x(k)
                      zp=object position z(k)
-                     rem TODO: "object does not exist" after shooting a dwarf
+                     rem TODO: "object does not exist" at "position object" after shooting a dwarf (and probably collecting the item too fast?) -- only happened once for me
                      position object monsterobjectnum(k-10)+260,xp,30,zp
                      objects(monsterobjectnum(k-10))=1
                      object_type(monsterobjectnum(k-10))=monsterobject(k-10)
@@ -852,7 +852,7 @@ remend
                   pl_key=pl_key+1
                   if fg_sound=1 then play sound 43
                   load image "status2.bmp",204
-                  old_life=0
+                  old_life=0 : rem Force _show_status to redraw
                   if map_level>1
                      for mmz=0 to 50
                         for mmx=0 to 50
@@ -1138,7 +1138,7 @@ _make_level:
                xx=1
             endif
             monsterobject(k-10)=t
-            monsterobjectnum(k-10)=objectnum
+            monsterobjectnum(k-10)=objectnum : rem TODO: objectnum is nowhere initialized?!
             objectnum=objectnum+1
          endif
       endif
@@ -1157,6 +1157,7 @@ _make_level:
 
    rem ** Place player
    load image "status.bmp",204
+   old_life=0 : rem Force _show_status to redraw
    position object 1,(manx*300)+150,0,(manz*300)+150
    if map_level=1
        gosub _make_status
@@ -1266,7 +1267,7 @@ _make_graves:
 return
 
 _make_player:
-    rem Load model and append animation data
+   rem Load model and append animation data
    if setup=0
        rem TODO: walking animation broken
        load object "idle.x",1 : tf1=total object frames(1)
@@ -1631,9 +1632,9 @@ _make_status:
    scale object 52,100,200,0
    lock object on 52
    position object 52,0,-440,800
-   old_life=-1
-   old_ammo=-1
-   old_shield=-1
+   old_life=0
+   old_ammo=0
+   old_shield=0
    gosub _show_status
 return
 
