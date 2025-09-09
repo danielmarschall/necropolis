@@ -1156,7 +1156,6 @@ _make_level:
    endif
 
    rem ** Place player
-   rem TODO: HUD size breaks on update
    load image "status.bmp",204
    position object 1,(manx*300)+150,0,(manz*300)+150
    if map_level=1
@@ -1612,6 +1611,10 @@ _show_status:
       text 50,6,str$(pl_life)
       text 150,6,str$(pl_shield)
       text 250,6,str$(pl_ammo)
+      
+      rem These two lines are required for some reason, otherwise image will be wrong scaled on second update of the HUD
+      load image "status.bmp", 205
+      delete image 205
 
       get image 205,0,0,300,25
       texture object 52,205
