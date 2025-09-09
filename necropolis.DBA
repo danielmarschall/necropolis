@@ -1554,29 +1554,22 @@ function checkmap(x,z)
 endfunction chk
 
 _show_map_make:
-   if map_level=1
-      rem Fix: Previously, we only loaded the bitmap when make=0. Now, we need to reload it, otherwise it flickers with DBPro. Sync does not help
-      load image "game-load.bmp",999
-      paste image 999,0,0
-      ink rgb(255,0,0),0
-      box 90,359,90+(make*3.68),370
-      sync
-   endif
    if map_level=2 and make=0
       stop sound 1
       delete sound 1
       sync off : sync rate 0
 
       anim_number=2
-      if anims=1
-         gosub _play_anim
-      else
-         rem Fix: Added picture for those who won't have animations
-         load image "entering.bmp",999
-         paste image 999,0,0
-         sync
-      endif
+      if anims=1 then gosub _play_anim
    endif
+
+   rem Fix: Previously, we only loaded the bitmap when make=0. Now, we need to reload it, otherwise it flickers with DBPro. Sync does not help
+   load image "game-load.bmp",999
+   paste image 999,0,0
+   ink rgb(255,0,0),0
+   box 90,359,90+(make*3.68),370
+   sync
+
    make=make+1
 return
 
