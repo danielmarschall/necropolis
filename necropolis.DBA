@@ -17,6 +17,7 @@ gosub _load_sounds
 
 hide mouse
 sync off : sync rate 0
+set image colorkey 0,0,0
 
 anim_number=1
 if anims=1 then gosub _play_anim
@@ -435,7 +436,7 @@ return
 
 rem decrease your shield and health
 _man_hit:
-   if sound playing(5)
+   if sound playing(5) : rem TODO: when no sound is playing, the damages from enemies are too fast, because this check fails
    else
       if fg_sound=1 then play sound 5
       if pl_shield>0
@@ -739,6 +740,7 @@ remend
                   if monsterobject(k-10)>-1
                      xp=object position x(k)
                      zp=object position z(k)
+                     rem TODO: "object does not exist" after shooting a dwarf
                      position object monsterobjectnum(k-10)+260,xp,30,zp
                      objects(monsterobjectnum(k-10))=1
                      object_type(monsterobjectnum(k-10))=monsterobject(k-10)
@@ -857,6 +859,7 @@ remend
                            if map(mmx,mmz)=30 then map(mmx,mmz)=1
                         next mmx
                      next mmz
+                     rem Open door (transparent)
                      if wall_texture=1
                         load image "wall10.bmp",400
                      else
@@ -867,7 +870,7 @@ remend
                         endif
                      endif
                      texture object 400,400
-                     set object 400,1,0,0
+                     set object 400,1,1,0
                   endif
                endif
                if object_type(k)=3
@@ -956,7 +959,7 @@ _make_objects:
          t=rnd(2)
          if t=2 then t=3
          object_type(k)=t
-         set object 260+k,1,0,1
+         set object 260+k,1,1,1
          repeat
             mx=(rnd(48)+1)
             mz=(rnd(48)+1)
@@ -970,7 +973,7 @@ _make_objects:
    else
       for k=0 to object_max
          if setup=0 then make object plain k+260,40,40
-         set object 260+k,1,0,1
+         set object 260+k,1,1,1
          objects(k)=0
          object_type(k)=-1
          if k<5
@@ -1046,7 +1049,7 @@ _make_level:
       endif
       load image "spgate.bmp",402
       texture object 401,402
-      set object 401,1,0,0
+      set object 401,1,1,0
       hide object 401
    endif
     rem Size of map
@@ -1153,6 +1156,7 @@ _make_level:
    endif
 
    rem ** Place player
+   rem TODO: HUD size breaks on update
    load image "status.bmp",204
    if map_level=1
        position object 1,(28*300)+150,0,(28*300)+150
@@ -1208,7 +1212,7 @@ _make_graves:
          texture object t+100,g
          g=g+1
          if g=12 then g=9
-         set object 100+t,1,0,1
+         set object 100+t,1,1,1
          repeat
             mx=(rnd(48)+1)
             mz=(rnd(48)+1)
@@ -1230,7 +1234,7 @@ _make_graves:
          texture object k+100,g
          g=g+1
          if g=12 then g=9
-         set object 100+k,1,0,1
+         set object 100+k,1,1,1
       next k
       t=1
       for x=1 to 49
@@ -1266,6 +1270,7 @@ return
 _make_player:
     rem Load model and append animation data
    if setup=0
+       rem TODO: walking animation broken
        load object "idle.x",1 : tf1=total object frames(1)
        append object "walk.x",1,1+tf1 : tf2=total object frames(1)
        yrotate object 1,180
@@ -1699,7 +1704,7 @@ _make_floorplan:
     rem Recreate floor/roof as single object
     make object 2,2,1
     hide object 2
-    set object 2,1,1,0
+    set object 2,1,0,0
     set object collision off 2
 return
 
@@ -1946,7 +1951,7 @@ _setup_textures:
       for k=0 to 7
          if setup=0 then make object plain 150+k,34,34
          position object 150+k,-10000,-10000,-10000
-         set object 150+k,1,0,1
+         set object 150+k,1,1,1
          monstershot(k)=0
          texture object 150+k,139
          hide object 150+k
@@ -1955,7 +1960,7 @@ _setup_textures:
       for k=0 to 3
          if setup=0 then make object plain 160+k,64,64
          position object 160+k,-10000,-10000,-10000
-         set object 160+k,1,0,1
+         set object 160+k,1,1,1
          manshot(k)=0
          texture object 160+k,138
          hide object 160+k
@@ -1964,7 +1969,7 @@ _setup_textures:
       for k=10 to monster_max+10
          if setup=0 then make object plain k,90,180
          position object k,-10000,-10000,-10000
-         set object k,1,0,1
+         set object k,1,1,1
          monsterdir(k-10)=0
          texture object k,20
          monstertexture(k-10)=20
@@ -2013,7 +2018,7 @@ _setup_textures:
    for k=0 to sphere_max
       if setup=0 then make object plain k+300,49,21
         position object k+300,-10000,-10000,-10000
-      set object k+300,1,0,1
+      set object k+300,1,1,1
         spheredir(k)=90
         texture object k+300,300
       spheretexture(k)=300
