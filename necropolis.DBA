@@ -198,6 +198,9 @@ _get_menu:
          until downkey()=0
       endif
       if returnkey()=1
+         repeat
+            sync
+         until returnkey()=0
          if menu=1
             if pos=0
                gosub _play_game
@@ -222,9 +225,6 @@ _get_menu:
                gosub _game_options
                menu=1
                pos=0
-               repeat
-                  gosub _fade_menu
-               until returnkey()=0
             endif
          else
             if pos=0
@@ -240,9 +240,6 @@ _get_menu:
                   fg_sound=1
                   bg_sound=1
                endif
-               repeat
-                  gosub _fade_menu
-               until returnkey()=0
             endif
             if pos=1
                fade=-1
@@ -255,13 +252,13 @@ _get_menu:
                   keyb$="Keyboard"
                   input_ctrl=0
                endif
-               repeat
-                  gosub _fade_menu
-               until returnkey()=0
             endif
          endif
       endif
    until returnkey()=1 and pos=3
+   repeat
+      sync
+   until returnkey()=0
    if menu=1 then playgame=0
 return
 
