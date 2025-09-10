@@ -214,8 +214,8 @@ _get_menu:
                   play sound 107
                endif
                repeat
-                   rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help
-                   paste image 999,0,0
+                  rem Fix: We need to reload it, otherwise it flickers with DBPro. Sync does not help
+                  paste image 999,0,0
                until inkey$()="q"
                if fg_sound=1
                   delete sound 107
@@ -473,13 +473,13 @@ _move_shots:
          move object 160+k,30
          sx=object position x(160+k)
          sz=object position z(160+k)
-         if map(sx/300,sz/300)<>1
+         if getmap(int(sx/300),int(sz/300))<>1
             hide object 160+k
             manshot(k)=0
          else
             for l=10 to monster_num+10
                if monster(l-10)>0
-                   mx=object position x(l)
+                  mx=object position x(l)
                   mz=object position z(l)
                   if sx>mx-30 and sx<mx+30 and sz>mz-30 and sz<mz+30
                      hide object 160+k
@@ -519,7 +519,7 @@ _move_zombie_flesh:
             rotate object 150+k,0,monstershotdir(k),0
          endif
          move object 150+k,-30
-         if map(int((object position x(150+k))/300),int((object position z(150+k))/300))<>1
+         if getmap(int((object position x(150+k))/300),int((object position z(150+k))/300))<>1
             hide object 150+k
             monstershot(k)=0
          endif
@@ -561,7 +561,7 @@ _handle_player:
       s#=60
       tx=(newxvalue(x#,a#,s#))/300
       tz=(newzvalue(z#,a#,s#))/300
-      if map(tx,tz)=3
+      if getmap(tx,tz)=3
          if pl_key>0
             map_level=map_level+1
             make=0
@@ -844,7 +844,7 @@ remend
                   if map_level>1
                      for mmz=0 to 50
                         for mmx=0 to 50
-                           if map(mmx,mmz)=30 then map(mmx,mmz)=1
+                           if getmap(mmx,mmz)=30 then setmap(mmx,mmz,1)
                         next mmx
                      next mmz
                      rem Open door (transparent)
@@ -951,7 +951,7 @@ _make_objects:
          repeat
             mx=(rnd(48)+1)
             mz=(rnd(48)+1)
-         until map(mx,mz)=1
+         until getmap(mx,mz)=1
          position object k+260,(mx*300)+150,30,(mz*300)+150
          hide object k+260
       next k
@@ -973,7 +973,7 @@ _make_objects:
             repeat
                mx=(rnd(48)+1)
                mz=(rnd(48)+1)
-            until map(mx,mz)=1
+            until getmap(mx,mz)=1
             position object k+260,(mx*300)+150,30,(mz*300)+150
          endif
          hide object k+260
@@ -1051,15 +1051,15 @@ _make_level:
     if map_level=1
        for k=0 to 3
           for l=0 to 6
-             map(19+l,25+k)=2
+             setmap(19+l,25+k,2)
           next l
        next k
        for k=0 to 1
           for l=0 to 4
-             map(20+l,23+k)=2
+             setmap(20+l,23+k,2)
           next l
        next k
-       map(24,24)=3
+       setmap(24,24,3)
     endif
 
    rem ** Fog 80=normal dark, 100=spacegate white
@@ -1114,7 +1114,7 @@ _make_level:
       repeat
          mx=(rnd(48)+1)
          mz=(rnd(48)+1)
-      until map(mx,mz)=1
+      until getmap(mx,mz)=1
       position object k,(mx*300)+150,90,(mz*300)+150
 
       if map_level=1
@@ -1203,7 +1203,7 @@ _make_graves:
          repeat
             mx=(rnd(48)+1)
             mz=(rnd(48)+1)
-         until map(mx,mz)=1
+         until getmap(mx,mz)=1
          position object t+100,(mx*300)+150,90,(mz*300)+150
          hide object t+100
       next t
@@ -1226,17 +1226,17 @@ _make_graves:
       t=1
       for x=1 to 49
          for z=1 to 49
-            if map(x,z)>0
+            if getmap(x,z)>0
                if maptype<>1
-                  if map(x,z)=4 and t<grave_num+1 and rnd(1)=1
-                     if map(x,z+1)>0 or map(x,z-1)>0
+                  if getmap(x,z)=4 and t<grave_num+1 and rnd(1)=1
+                     if getmap(x,z+1)>0 or getmap(x,z-1)>0
                         if rnd(1)=1
                            position object t+100,(x*300)+50,90,(z*300)+150
                         else
                            position object t+100,(x*300)+250,90,(z*300)+150
                         endif
                      endif
-                     if map(x+1,z)>0 or map(x-1,z)>0
+                     if getmap(x+1,z)>0 or getmap(x-1,z)>0
                         if rnd(1)=1
                            position object t+100,(x*300)+150,90,(z*300)+50
                         else
@@ -1273,13 +1273,13 @@ _make_map:
       if map_level=1
          for x=10 to 35
             for z=10 to 35
-               map(x,z)=1
+               setmap(x,z,1)
             next z
          next x
          manx=28
          manz=28
       else
-         rx=25 : rz=25 : map(rx,rz)=1
+         rx=25 : rz=25 : setmap(rx,rz,1)
          brx=rx
          brz=rz
          for t=0 to 300
@@ -1289,7 +1289,7 @@ _make_map:
                  if rnd(1)=0 then rz=rz-1 else rz=rz+1
              endif
              if rx>1 and rx<mapx-3 and rz>1 and rz<mapz-3
-                 map(rx,rz)=1
+                 setmap(rx,rz,1)
              endif
          next t
          manx=rx
@@ -1346,7 +1346,7 @@ _make_map:
       rz=brz
       manx=rx
       manz=rz
-      map(rx,rz)=1
+      setmap(rx,rz,1)
       direction=0
 
       for k=0 to rand_size*5
@@ -1368,7 +1368,7 @@ _make_map:
             if rz=limits
               if l-((l/2)*2)<>0 then rz=limits-1 else rz=limits-2
             endif
-            map(rx,rz)=1
+            setmap(rx,rz,1)
           next l
          repeat
             direction=rnd(4)
@@ -1440,90 +1440,90 @@ return
 
 _make_spacegate:
       rem **** spacegate
-      map(x+1,z+1)=30
-      map(x+1,z+2)=30
-      map(x+2,z+1)=30
-      map(x+2,z+2)=30
+      setmap(x+1,z+1,30)
+      setmap(x+1,z+2,30)
+      setmap(x+2,z+1,30)
+      setmap(x+2,z+2,30)
       position object 401,(x+2)*300,80,(z+2)*300
       hide object 401
 
       rx=-1
       rz=-1
       if z>1
-         if map(x+1,z-1)=1 then rx=x+1
-         if map(x+2,z-1)=1 then rx=x+2
+         if getmap(x+1,z-1)=1 then rx=x+1
+         if getmap(x+2,z-1)=1 then rx=x+2
          if rx>-1 then rz=z
       endif
       if rx=-1
          if z<49
-            if map(x+1,z+4)=1 then rx=x+1
-            if map(x+2,z+4)=1 then rx=x+2
+            if getmap(x+1,z+4)=1 then rx=x+1
+            if getmap(x+2,z+4)=1 then rx=x+2
             if rx>-1 then rz=z+3
          endif
       endif
       if rz=-1
          if x>1
-            if map(x-1,z+1)=1 then rz=z+1
-            if map(x-1,z+2)=1 then rz=z+2
+            if getmap(x-1,z+1)=1 then rz=z+1
+            if getmap(x-1,z+2)=1 then rz=z+2
             if rz>-1 then rx=x
          endif
       endif
       if rz=-1
          if x<49
-            if map(x+4,z+1)=1 then rz=z+1
-            if map(x+4,z+2)=1 then rz=z+2
+            if getmap(x+4,z+1)=1 then rz=z+1
+            if getmap(x+4,z+2)=1 then rz=z+2
             if rz>-1 then rx=x+3
          endif
       endif
       if rz=-1
-         if map(x,z-1)=1 or map(x-1,z)=1
-            map(x,z)=1
+         if getmap(x,z-1)=1 or getmap(x-1,z)=1
+            setmap(x,z,1)
             rz=z
             rx=x+1
          endif
-         if map(x+3,z-1)=1 or map(x+4,z)=1
-            map(x+3,z)=1
+         if getmap(x+3,z-1)=1 or getmap(x+4,z)=1
+            setmap(x+3,z,1)
             rz=z+1
             rx=x+3
          endif
-         if map(x-1,z+3)=1 or map(x,z+4)=1
-            map(x,z+3)=1
+         if getmap(x-1,z+3)=1 or getmap(x,z+4)=1
+            setmap(x,z+3,1)
             rx=x
             rz=z+2
          endif
-         if map(x+4,z+3)=1 or map(x+3,z+4)=1
-            map(x+3,z+3)=1
+         if getmap(x+4,z+3)=1 or getmap(x+3,z+4)=1
+            setmap(x+3,z+3,1)
             rx=x+2
             rz=z+3
          endif
       endif
       rem *** door
-      map(rx,rz)=31
+      setmap(rx,rz,31)
 return
 
 _check_pos:
-  if map(x,y)<10 and map(x,y)>0
+  if getmap(x,y)<10 and getmap(x,y)>0
     if t=1
-      if map(x,y-1)>0 or map(x,y+1)>0
-        if map(x-1,y)>0 or map(x+1,y)>0
-          map(x,y)=2
+      if getmap(x,y-1)>0 or getmap(x,y+1)>0
+        if getmap(x-1,y)>0 or getmap(x+1,y)>0
+          setmap(x,y,2)
         endif
       endif
     endif
     if t=2
-      if map(x,y)=1
-         if map(x,y-1)=2 or map(x,y+1)=2 or map(x+1,y)=2 or map(x-1,y)=2
-           map(x,y)=3
+      if getmap(x,y)=1
+         if getmap(x,y-1)=2 or getmap(x,y+1)=2 or getmap(x+1,y)=2 or getmap(x-1,y)=2
+           setmap(x,y,3)
          endif
       endif
     endif
     if t=3
-      if map(x,y)=1
-        if map(x,y-1)<4 and map(x,y+1)<4 and map(x+1,y)<4 and map(x-1,y)<4
-          if map(x,y-1)<>3 and map(x,y+1)<>3 and map(x+1,y)<>3 and map(x-1,y)<>3
-            map(x,y)=3
+      if getmap(x,y)=1
+        if getmap(x,y-1)<4 and getmap(x,y+1)<4 and getmap(x+1,y)<4 and getmap(x-1,y)<4
+          if getmap(x,y-1)<>3 and getmap(x,y+1)<>3 and getmap(x+1,y)<>3 and getmap(x-1,y)<>3
+            setmap(x,y,3)
           else
-            map(x,y)=4
+            setmap(x,y,4)
           endif
         endif
       endif
@@ -1535,7 +1535,7 @@ function checkmap(x,z)
   chk=1
   for xx=0 to 3
     for zz=0 to 3
-      if map(x+xx,z+zz)=1
+      if getmap(x+xx,z+zz)=1
         chk=0
         exit
       endif
@@ -1578,7 +1578,7 @@ _make_radar:
     cls
     for y=49 to 0 step -1
         for x=0 to 49
-             if map(x,y)>0 then box 200-(x*4),y*4,203-(x*4),(y*4)+3
+             if getmap(x,y)>0 then box 200-(x*4),y*4,203-(x*4),(y*4)+3
         next x
     next y
     get image 5,0,0,200,200
@@ -1650,8 +1650,8 @@ _make_floorplan:
     for z=0 to mapx-1
         gosub _show_map_make
         for x=0 to mapz-1
-            if map(x,z)>0
-                if map(x,z)=30
+            if getmap(x,z)>0
+                if getmap(x,z)=30
                    rem floor
                    add limb 6,sg1,1
                    offset limb 6,sg1,(x*300)+150,1,(z*300)+150
@@ -1732,16 +1732,16 @@ _make_walls:
         for rx=0 to mapz-1
             rem Create walls for this tile
             if map_level=1
-               if map(rx,rz)=1 then limb=addwall(rx,rz,4,limb,voffset)
+               if getmap(rx,rz)=1 then limb=addwall(rx,rz,4,limb,voffset)
             else
                if maptype=1
-                  if map(rx,rz)=30
+                  if getmap(rx,rz)=30
                      sg1=addwall(rx,rz,8,sg1,voffset)
                      add_door(rx,rz)
                   endif
-                  if map(rx,rz)=1 or map(rx,rz)=31
+                  if getmap(rx,rz)=1 or getmap(rx,rz)=31
                       if rnd(3)=1
-                           rem alcove
+                          rem alcove
                           limb2=addwall(rx,rz,4,limb2,voffset)
                       else
                           if rnd(1)=0
@@ -1752,22 +1752,22 @@ _make_walls:
                               limb=addwall(rx,rz,3,limb,voffset)
                           endif
                       endif
-                      map(rx,rz)=1
+                      setmap(rx,rz,1)
                   endif
                else
-                  if map(rx,rz)=1 or map(rx,rz)=2 or map(rx,rz)=31
+                  if getmap(rx,rz)=1 or getmap(rx,rz)=2 or getmap(rx,rz)=31
                      limb=addwall(rx,rz,3,limb,voffset)
-                     map(rx,rz)=1
+                     setmap(rx,rz,1)
                   endif
-                  if map(rx,rz)=3
+                  if getmap(rx,rz)=3
                      limb3=addwall(rx,rz,5,limb3,voffset)
-                     map(rx,rz)=1
+                     setmap(rx,rz,1)
                   endif
-                  if map(rx,rz)=4
+                  if getmap(rx,rz)=4
                      limb2=addwall(rx,rz,4,limb2,voffset)
-                     map(rx,rz)=1
+                     setmap(rx,rz,1)
                   endif
-                  if map(rx,rz)=30
+                  if getmap(rx,rz)=30
                      sg1=addwall(rx,rz,8,sg1,voffset)
                      add_door(rx,rz)
                   endif
@@ -2049,25 +2049,25 @@ _monster_position:
 
             y=object position y(k)
             if monsterdir(k-10)=0
-               if map(x/300,(z-60)/300)=1
+               if getmap(x/300,(z-60)/300)=1
                   position object k,x,y,z-monsterspeed(k-10)
                   mpos=1
                endif
             endif
             if monsterdir(k-10)=90
-               if map((x+60)/300,z/300)=1
+               if getmap((x+60)/300,z/300)=1
                   position object k,x+monsterspeed(k-10),y,z
                   mpos=1
                endif
             endif
             if monsterdir(k-10)=180
-               if map(x/300,(z+60)/300)=1
+               if getmap(x/300,(z+60)/300)=1
                   position object k,x,y,z+monsterspeed(k-10)
                   mpos=1
                endif
             endif
             if monsterdir(k-10)=270
-               if map((x-60)/300,z/300)=1
+               if getmap((x-60)/300,z/300)=1
                   position object k,x-monsterspeed(k-10),y,z
                   mpos=1
                endif
@@ -2086,19 +2086,19 @@ function monster_turn(k,x,z,mx,mz,t)
    if t=0
       d=-1
       if abs(mx-x)<4 and abs(mz-z)<4
-         if mx<x and map((mpx-60)/300,z)=1 then d=270
-         if d=-1 and map((mpx+60)/300,z)=1 and mx>x then d=90
-         if d=-1 and map(x,(mpz-60)/300)=1 and mz<z then d=0
-         if d=-1 and map(x,(mpz+60)/300)=1 and mz>z then d=180
+         if mx<x and getmap((mpx-60)/300,z)=1 then d=270
+         if d=-1 and getmap((mpx+60)/300,z)=1 and mx>x then d=90
+         if d=-1 and getmap(x,(mpz-60)/300)=1 and mz<z then d=0
+         if d=-1 and getmap(x,(mpz+60)/300)=1 and mz>z then d=180
       endif
 
       if d=-1
          repeat
             dr=rnd(3)
-            if dr=0 and map(x-1,z)=1 then d=270
-            if dr=1 and map(x+1,z)=1 then d=90
-            if dr=2 and map(x,z-1)=1 then d=0
-            if dr=3 and map(x,z+1)=1 then d=180
+            if dr=0 and getmap(x-1,z)=1 then d=270
+            if dr=1 and getmap(x+1,z)=1 then d=90
+            if dr=2 and getmap(x,z-1)=1 then d=0
+            if dr=3 and getmap(x,z+1)=1 then d=180
          until d>-1
       endif
       monsterdir(k-10)=d
@@ -2121,7 +2121,7 @@ _sphere_position:
       repeat
          x=rnd(47)+1
          z=rnd(47)+1
-      until map(x,z)=1
+      until getmap(x,z)=1
       position object k+300,(x*300)+150,360,(z*300)+150
       show object k+300
    next k
@@ -2145,8 +2145,8 @@ _move_sphere:
             move object 300+k,30
             x=(object position x(300+k))/300
             z=(object position z(300+k))/300
-            if map(x,z)=1
-               if map(x-1,z)=1 and map(x+1,z)=1 and map(x,z+1)=1 and map(x,z-1)=1 and rnd(3)=1
+            if getmap(x,z)=1
+               if getmap(x-1,z)=1 and getmap(x+1,z)=1 and getmap(x,z+1)=1 and getmap(x,z-1)=1 and rnd(3)=1
                     move object 300+k,-30
                   spheredir(k)=wrapvalue(spheredir(k)-30)
                else
@@ -2164,25 +2164,25 @@ return
 rem ** Functions
 rem add walls to object
 function addwall(rx,rz,objid,limbid,voffset)
-    if map(rx,rz+1)=0
+    if getmap(rx,rz+1)=0
         add limb objid,limbid,1
         rotate limb objid,limbid,0,180,0
         offset limb objid,limbid,(rx*300)+150,voffset,(rz*300)+300
         limbid=limbid+1
     endif
-    if map(rx,rz-1)=0
+    if getmap(rx,rz-1)=0
         add limb objid,limbid,1
         rotate limb objid,limbid,0,0,0
         offset limb objid,limbid,(rx*300)+150,voffset,(rz*300)
         limbid=limbid+1
     endif
-    if map(rx+1,rz)=0
+    if getmap(rx+1,rz)=0
         add limb objid,limbid,1
         rotate limb objid,limbid,0,270,0
         offset limb objid,limbid,(rx*300)+300,voffset,(rz*300)+150
         limbid=limbid+1
     endif
-    if map(rx-1,rz)=0
+    if getmap(rx-1,rz)=0
         add limb objid,limbid,1
         rotate limb objid,limbid,0,90,0
         offset limb objid,limbid,(rx*300),voffset,(rz*300)+150
@@ -2206,18 +2206,18 @@ function add_door(rx,rz)
    endif
    texture object 400,400
 
-   if (map(rx,rz+1)>0 and map(rx,rz+1)<5) or map(rx,rz+1)=31
+   if (getmap(rx,rz+1)>0 and getmap(rx,rz+1)<5) or getmap(rx,rz+1)=31
       position object 400,(rx*300)+150,155,(rz*300)+300
    endif
-   if (map(rx+1,rz)>0 and map(rx+1,rz)<5) or map(rx+1,rz)=31
+   if (getmap(rx+1,rz)>0 and getmap(rx+1,rz)<5) or getmap(rx+1,rz)=31
       position object 400,(rx*300),155,(rz*300)
    endif
 
-   if (map(rx,rz-1)>0 and map(rx,rz-1)<5) or map(rx,rz-1)=31
+   if (getmap(rx,rz-1)>0 and getmap(rx,rz-1)<5) or getmap(rx,rz-1)=31
       rotate object 400,0,0,0
       position object 400,(rx*300)+150,155,(rz*300)
    endif
-   if (map(rx-1,rz)>0 and map(rx-1,rz)<5) or map(rx-1,rz)=31
+   if (getmap(rx-1,rz)>0 and getmap(rx-1,rz)<5) or getmap(rx-1,rz)=31
       rotate object 400,0,0,0
       position object 400,(rx*300),155,(rz*300)+150
    endif
@@ -2240,7 +2240,7 @@ function keepwithinmap(objid,snd)
          tx=tx#/300
          tz=tz#/300
          if tx>=0 and tx<mapdata(1) and tz>=0 and tz<mapdata(2)
-            if map(tx,tz)<>1
+            if getmap(tx,tz)<>1
                hit=1
                col=1
                x#=x#+((x#-tx#)/20.0)
@@ -2259,12 +2259,37 @@ function keepwithinmap(objid,snd)
    endif
 endfunction
 
+function getmap(x,z)
+  mapval = 0
+  if x < 0
+    mapval = 0
+  else
+    if z < 0 
+      mapval = 0
+    else
+      if x >= mapdata(1)
+        mapval = 0
+      else
+        if z >= mapdata(2)
+          mapval = 0
+        else
+          mapval = map(x,z)
+        endif
+      endif
+    endif
+  endif
+endfunction mapval
+
+function setmap(x,z,mapval)
+  if (x >= 0) and (z >= 0) and (x < mapdata(1)) and (z < mapdata(2)) then map(x,z) = mapval
+endfunction
+
 rem return zero if location out of floorplan
 function checkinside(cx#,cz#)
     inside=1
-    if map(int(cx#/300),int(cz#/300))<>1 then inside=0
-    if map(int((cx#-10)/300),int(cz#/300))<>1 then inside=0
-    if map(int((cx#+10)/300),int(cz#/300))<>1 then inside=0
-    if map(int(cx#/300),int((cz#-10)/300))<>1 then inside=0
-    if map(int(cx#/300),int((cz#+10)/300))<>1 then inside=0
+    if getmap(int(cx#/300),int(cz#/300))<>1 then inside=0
+    if getmap(int((cx#-10)/300),int(cz#/300))<>1 then inside=0
+    if getmap(int((cx#+10)/300),int(cz#/300))<>1 then inside=0
+    if getmap(int(cx#/300),int((cz#-10)/300))<>1 then inside=0
+    if getmap(int(cx#/300),int((cz#+10)/300))<>1 then inside=0
 endfunction inside
