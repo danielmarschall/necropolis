@@ -10,7 +10,6 @@ rem       - After death screen (if died from a sphere), the menu shows up with f
 rem       - At one level, the character started somewhere outside the map, you could see backdrop and could not move
 rem       - At one level, the door to the spacegate room was rotated wrong (90 angle)
 rem       - At one level, there were transparent walls showing a white-barrel room (NOT the spacegate room). These walls could be passed once the player got the key
-rem       - After getting the deathscreen and then play the game again, the outdoor map is designed like a maze. Something from the world generation is not reset...
 rem       - Sphere only looks like it is cut in half. Is the picture not fully cut out from sphere1.bmp ? But get image t+300,... correctly uses width 146
 
 rem TODO: Improvement suggestions
@@ -1308,9 +1307,13 @@ _make_map:
    dim map(mapx,mapz)
    if maptype=1 or map_level=1
       if map_level=1
-         for x=10 to 35
-            for z=10 to 35
-               setmap(x,z,1)
+         for x=0 to mapx
+            for z=0 to mapz
+               if x>=10 and x<=35 and z>=10 and z<=35
+                   setmap(x,z,1)
+               else
+                   setmap(x,z,0)
+               endif
             next z
          next x
          manx=28
