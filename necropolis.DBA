@@ -1640,9 +1640,9 @@ return
 _make_status:
    create bitmap 10,300,25
    make object plain 52,300,25
-   scale object 52,100,200,0
+   scale object 52,175,225,0
    lock object on 52
-   position object 52,0,-440,800
+   position object 52,0,-415,800
    old_life=0
    old_ammo=0
    old_shield=0
