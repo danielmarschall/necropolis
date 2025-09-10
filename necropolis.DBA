@@ -351,9 +351,12 @@ _initialize:
    sync on : sync rate 30
 
    rem Global map array
-   dim mapdata(5)
-   mapdata(1)=50 : mapdata(2)=50
-   dim map(mapdata(1),mapdata(2))
+   rem "global" is important, otherwise functions such as getmap() and setmap() cannot use them
+   global mapx
+   global mapz
+   mapx = 50
+   mapz = 50
+   dim map(mapx,mapz)
 
    rem ***** sphere data
    sphere_max=7
@@ -1040,9 +1043,6 @@ _make_level:
       set object 401,1,1,0
       hide object 401
    endif
-    rem Size of map
-    mapx=mapdata(1)
-    mapz=mapdata(2)
     rem ** map
     if map_level>2
        _start_warp(fg_sound)
@@ -2239,7 +2239,7 @@ function keepwithinmap(objid,snd)
          tz#=newzvalue(z#,wrapvalue(a#+r),40)
          tx=tx#/300
          tz=tz#/300
-         if tx>=0 and tx<mapdata(1) and tz>=0 and tz<mapdata(2)
+         if tx>=0 and tx<mapx and tz>=0 and tz<mapz
             if getmap(tx,tz)<>1
                hit=1
                col=1
@@ -2267,10 +2267,10 @@ function getmap(x,z)
     if z < 0 
       mapval = 0
     else
-      if x >= mapdata(1)
+      if x >= mapx
         mapval = 0
       else
-        if z >= mapdata(2)
+        if z >= mapz
           mapval = 0
         else
           mapval = map(x,z)
@@ -2281,7 +2281,7 @@ function getmap(x,z)
 endfunction mapval
 
 function setmap(x,z,mapval)
-  if (x >= 0) and (z >= 0) and (x < mapdata(1)) and (z < mapdata(2)) then map(x,z) = mapval
+  if (x >= 0) and (z >= 0) and (x < mapx) and (z < mapz) then map(x,z) = mapval
 endfunction
 
 rem return zero if location out of floorplan
