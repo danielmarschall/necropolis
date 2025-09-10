@@ -600,6 +600,7 @@ _handle_player:
    endif
 
    rem Control animation
+   remstart
    if lastanimstate<>animstate
        animpacer=4
        stop object 1
@@ -613,6 +614,29 @@ _handle_player:
            if animstate=1 then loop object 1,0,tf1 : set object speed 1,5
            if animstate=2 then loop object 1,tf1+6,tf2 : set object speed 1,20
        endif
+   endif
+   remend
+   rem Fix: We animate the player object ourselves, because "loop object" is broken
+   rem      In DBPro if "texture object" is called. If "texture object" is called on enemies/objects,
+   rem      we would need to run 2 times sync in the main loop, but this would kill
+   rem      the performance.
+   if lastanimstate<>animstate
+       rem stop object 1
+       lastanimstate=animstate
+       if animstate=1 then state1frame# = 0
+       if animstate=2 then state2frame# = tf1+6
+   endif
+   if animstate=1
+       set object frame 1,floor(state1frame#)
+       rem state1frame# = state1frame# + 0.05
+       state1frame# = state1frame# + 0.4
+       if state1frame# > tf1 then state1frame# = 0
+   endif
+   if animstate=2
+       set object frame 1,floor(state2frame#)
+       rem state2frame# = state2frame# + 0.20
+       state2frame# = state2frame# + 0.75
+       if state2frame# > tf2 then state2frame# = tf1+6
    endif
 
    rem Track player with camera (zoom control to keep inside walls)
@@ -1257,7 +1281,6 @@ return
 _make_player:
    rem Load model and append animation data
    if setup=0
-       rem TODO: walking animation broken
        load object "idle.x",1 : tf1=total object frames(1)
        append object "walk.x",1,1+tf1 : tf2=total object frames(1)
        yrotate object 1,180
