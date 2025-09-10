@@ -11,7 +11,10 @@ rem       - At one level, the character started somewhere outside the map, you c
 rem       - At one level, the door to the spacegate room was rotated wrong (90 angle)
 rem       - At one level, there were transparent walls showing a white-barrel room (NOT the spacegate room). These walls could be passed once the player got the key
 rem       - After getting the deathscreen and then play the game again, the outdoor map is designed like a maze. Something from the world generation is not reset...
-rem       - More transparency texture bug at some objects and zombies
+rem       - Sphere only looks like it is cut in half. Is the picture not fully cut out from sphere1.bmp ? But get image t+300,... correctly uses width 146
+
+rem TODO: Improvement suggestions
+rem       - Show level number somewhere in the HUD
 
 rem ---
 
@@ -58,20 +61,20 @@ _play_anim:
       sync : sync
    until animation playing(1)=0 or inkey$()<>""
       
-   rem 1) shove the overlay window off-screen, then flip away any visible frame
+   rem 1. shove the overlay window off-screen, then flip away any visible frame
    place animation 1,-2000,-2000,-1990,-1990
    sync : sync
    
-   rem 2) stop & free the animation
+   rem 2. stop & free the animation
    stop animation 1
    delete animation 1
    
-   rem 3) now ensure both buffers show a known clean frame
+   rem 3. now ensure both buffers show a known clean frame
    sync on : sync rate 0
    cls : sync
    cls : sync
    
-   rem 4) restore your normal background to both buffers
+   rem 4. restore your normal background to both buffers
    paste image 999,0,0 : sync
    paste image 999,0,0 : sync
 
@@ -1866,14 +1869,14 @@ _setup_textures:
 
     rem ceiling texture
     if map_level=1
-       load image "ceiling02.bmp",3
+      load image "ceiling02.bmp",3
     else
       if maptype=0
           load image "ceiling01.bmp",3
       else
           load image "stone-top.bmp",3
       endif
-       load image "white-ceiling.bmp",202
+      load image "white-ceiling.bmp",202
     endif
 
     rem Wall textures
@@ -1941,12 +1944,12 @@ _setup_textures:
    else
       load bitmap "zombie.bmp",1
    endif
-      for t=0 to 7
-         get image t+50,t*128,0,(t*128)+127,255
-         get image t+60,t*128,256,(t*128)+127,511
-         get image t+70,t*128,512,(t*128)+127,767
-         get image t+80,t*128,768,(t*128)+127,1023
-      next t
+   for t=0 to 7
+      get image t+50,t*128,0,(t*128)+127,255
+      get image t+60,t*128,256,(t*128)+127,511
+      get image t+70,t*128,512,(t*128)+127,767
+      get image t+80,t*128,768,(t*128)+127,1023
+   next t
    delete bitmap 1
    rem dwarf
    if map_level=1
@@ -2037,21 +2040,21 @@ _setup_textures:
          sphere_type=2
       endif
    endif
-     for t=0 to 11
-        get image t+300,0,t*64,146,(t*64)+63
+   for t=0 to 11
+      get image t+300,0,t*64,146,(t*64)+63
    next t
-     delete bitmap 31
+   delete bitmap 31
 
    for k=0 to sphere_max
       if setup=0 then make object plain k+300,49,21
-        position object k+300,-10000,-10000,-10000
+      position object k+300,-10000,-10000,-10000
       set object k+300,1,1,1
-        spheredir(k)=90
-        texture object k+300,300
+      spheredir(k)=90
+      texture object k+300,300
       spheretexture(k)=300
-        hide object k+300
+      hide object k+300
       sphere(k)=0
-     next k
+   next k
 return
 
 _monster_position:
