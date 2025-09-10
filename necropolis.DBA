@@ -7,9 +7,6 @@ rem ---
 
 rem TODO: Various bugs found during playing
 rem       - After death screen (if died from a sphere), the menu shows up with framerate 500. Also, is it normal that the silver sphere kills you in 3 seconds?
-rem       - At one level, the character started somewhere outside the map, you could see backdrop and could not move
-rem       - At one level, the door to the spacegate room was rotated wrong (90 angle)
-rem       - At one level, there were transparent walls showing a white-barrel room (NOT the spacegate room). These walls could be passed once the player got the key
 rem       - Sphere only looks like it is cut in half. Is the picture not fully cut out from sphere1.bmp ? But get image t+300,... correctly uses width 146
 
 rem TODO: Improvement suggestions
@@ -880,8 +877,8 @@ remend
                   load image "status2.bmp",204
                   old_life=0 : rem Force _show_status to redraw
                   if map_level>1
-                     for mmz=0 to 50
-                        for mmx=0 to 50
+                     for mmz=0 to mapz
+                        for mmx=0 to mapx
                            if getmap(mmx,mmz)=30 then setmap(mmx,mmz,1)
                         next mmx
                      next mmz
@@ -1305,15 +1302,17 @@ return
 _make_map:
    rem Generate block map for room
    dim map(mapx,mapz)
+   for x=0 to mapx
+      for z=0 to mapz
+         setmap(x,z,0)
+      next z
+   next x
    if maptype=1 or map_level=1
+      rem Maptype caves or level 1
       if map_level=1
-         for x=0 to mapx
-            for z=0 to mapz
-               if x>=10 and x<=35 and z>=10 and z<=35
-                   setmap(x,z,1)
-               else
-                   setmap(x,z,0)
-               endif
+         for x=10 to 35
+            for z=10 to 35
+               setmap(x,z,1)
             next z
          next x
          manx=28
@@ -1330,10 +1329,10 @@ _make_map:
              endif
              if rx>1 and rx<mapx-3 and rz>1 and rz<mapz-3
                  setmap(rx,rz,1)
+                 manx=rx
+                 manz=rz
              endif
          next t
-         manx=rx
-         manz=rz
 
          rem *** spacegate code 1
          x=1
@@ -1375,6 +1374,7 @@ _make_map:
          gosub _make_spacegate
       endif
    else
+      rem Maptype corridors or level 1
       size=4
       old_dir=-1
       limits=(size*5)
@@ -1409,7 +1409,7 @@ _make_map:
               if l-((l/2)*2)<>0 then rz=limits-1 else rz=limits-2
             endif
             setmap(rx,rz,1)
-          next l
+         next l
          repeat
             direction=rnd(4)
          until direction<>old_dir
