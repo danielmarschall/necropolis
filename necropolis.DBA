@@ -533,12 +533,10 @@ _handle_player:
    walkstate=14
    revstate=-14
 
-   if animpersist=0
-       if upkey()=1 or (joystick up()=1 and input_ctrl=1) then move object 1,walkstate : animstate=2
-       if downkey()=1 or (joystick down()=1 and input_ctrl=1) then move object 1,revstate : animstate=2
-       if leftkey()=1 or (joystick left()=1 and input_ctrl=1) then yrotate object 1,wrapvalue(object angle y(1)-6) : animstate=2
-       if rightkey()=1 or (joystick right()=1 and input_ctrl=1) then yrotate object 1,wrapvalue(object angle y(1)+6) : animstate=2
-   endif
+   if upkey()=1 or (joystick up()=1 and input_ctrl=1) then move object 1,walkstate : animstate=2
+   if downkey()=1 or (joystick down()=1 and input_ctrl=1) then move object 1,revstate : animstate=2
+   if leftkey()=1 or (joystick left()=1 and input_ctrl=1) then yrotate object 1,wrapvalue(object angle y(1)-6) : animstate=2
+   if rightkey()=1 or (joystick right()=1 and input_ctrl=1) then yrotate object 1,wrapvalue(object angle y(1)+6) : animstate=2
 
    nxtlvl=0
    if (spacekey()=1 and debug=1) then nxtlvl=1
@@ -599,30 +597,20 @@ _handle_player:
    endif
 
    rem Control animation
-   if animpersist>0 then animstate=animpersist
    if lastanimstate<>animstate
        animpacer=4
        stop object 1
        lastanimstate=animstate
        if animstate=1 then set object frame 1,0
        if animstate=2 then set object frame 1,tf1+6
-       if animstate=3 then set object frame 1,tf2+1
-       if animstate=4 then set object frame 1,tf3+1
-       if animstate=5 then set object frame 1,tf4+1
    endif
    if animpacer>0
        animpacer=animpacer-1
        if animpacer=0
            if animstate=1 then loop object 1,0,tf1 : set object speed 1,5
            if animstate=2 then loop object 1,tf1+6,tf2 : set object speed 1,20
-           if animstate=3 then loop object 1,tf2+1,tf3 : set object speed 1,30
-           if animstate=4 then loop object 1,tf3+1,tf4 : set object speed 1,30
-           if animstate=5 then loop object 1,tf4+1,tf5 : set object speed 1,30
        endif
    endif
-   if animstate=3 and object frame(1)>=tf3-2 then animpersist=0
-   if animstate=4 and object frame(1)>=tf4-2 then animpersist=0
-   if animstate=5 and object frame(1)>=tf5-2 then animpersist=0
 
    rem Track player with camera (zoom control to keep inside walls)
    cdis#=40
