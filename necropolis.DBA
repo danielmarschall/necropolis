@@ -1,7 +1,17 @@
 rem mavrick designs www.mavrick.co.uk
 rem Taken from the DB Demo CD, dated source code 24 January 2001
-rem Fixed by Daniel Marschall 09 Sep 2025 to make it compatible with DB Pro
+rem Fixed by Daniel Marschall 10 Sep 2025 to make it compatible with DB Pro
 rem https://github.com/danielmarschall/necropolis
+
+rem ---
+
+rem TODO: Various bugs found during playing
+rem       - After death screen (if died from a sphere), the menu shows up with framerate 500. Also, is it normal that the silver sphere kills you in 3 seconds?
+rem       - At one level, the character started somewhere outside the map, you could see backdrop and could not move
+rem       - At one level, the door to the spacegate room was rotated wrong (90 angle)
+rem       - At one level, there were transparent walls showing a white-barrel room (NOT the spacegate room). These walls could be passed once the player got the key
+rem       - After getting the deathscreen and then play the game again, the outdoor map is designed like a maze. Something from the world generation is not reset...
+rem       - More transparency texture bug at some objects and zombies
 
 rem ---
 
@@ -410,7 +420,6 @@ return
 _load_sounds:
    load sound "thunder.wav",2
    load sound "thunder2.wav",3
-   load sound "rain.wav",1
    load sound "ooh.wav",4
    load sound "ouch.wav",5
    load sound "dw1.wav",10
@@ -755,7 +764,7 @@ remend
                   if monsterobject(k-10)>-1
                      xp=object position x(k)
                      zp=object position z(k)
-                     rem TODO: "object does not exist" at "position object" after shooting a dwarf (and probably collecting the item too fast?) -- only happened once for me
+                     rem TODO: Happened twice for me: "object does not exist" at "position object" after shooting a dwarf at stage 1
                      position object monsterobjectnum(k-10)+260,xp,30,zp
                      objects(monsterobjectnum(k-10))=1
                      object_type(monsterobjectnum(k-10))=monsterobject(k-10)
@@ -1156,15 +1165,17 @@ _make_level:
       endif
     next k
 
-   if map_level=2
-      if bg_sound=1
-         delete sound 2
-         delete sound 3
-         load sound "wind.wav",1
-         set sound speed 1,1500
+   sync on : sync rate 30
+
+   if bg_sound=1
+      if sound exist(1) then delete sound 1
+      if map_level=1
+        load sound "rain.wav",1
+      else
+        load sound "wind.wav",1
+        set sound speed 1,1500
       endif
-      sync on : sync rate 30
-      if bg_sound=1 then loop sound 1
+      loop sound 1
    endif
 
    rem ** Place player
