@@ -1,9 +1,10 @@
-rem mavrick designs www.mavrick.co.uk
+rem Necropolis - City of the Dead
+rem (C) 2000 Mavrick Designs
 rem Taken from the DB Demo CD, dated source code 24 January 2001
-rem Fixed by Daniel Marschall 11 Sep 2025 to make it compatible with DB Pro
-rem and to fix a bunch of bugs and problems.
+rem Fixed by Daniel Marschall to make it compatible with DB Pro and to fix a bunch of bugs and problems.
+rem Revision: 11 September 2025
 rem Current version here: https://github.com/danielmarschall/necropolis
-rem License: Unknown (Freeware / Abandonware)
+rem License: Freeware / Abandonware
 
 rem ---
 
@@ -21,8 +22,6 @@ rem           - Check if the door will be at the 4th wall and the 3 other walls 
 rem             I am not sure if add_door() will choose the same case 1,2,3,4 as _make_walls (spacegate walls = image 203)
 rem           - The player should only be able to enter through the door, not through other walls
 rem           Or: there could be multiple doors, but that would be hard because we only have one "object 400"
-
-rem covers.qxd => Can we convert that in PSD so it can be displayed with more programs? (Can Adobe InDesign open it?)
 
 rem ---
 
@@ -472,11 +471,11 @@ return
 rem decrease your shield and health
 _man_hit:
    hit_timer=hit_timer+1
-   if hit_timer>30 then hit_timer=0
+   if hit_timer>20 then hit_timer=0
    if hit_timer=1
       if fg_sound=1 then play sound 5 : rem ouch.wav
       if pl_shield>0
-         pl_shield=pl_shield-hitpoints-hitpoints-(map_level-1) : rem TODO: is it really intended that hitpoints is subtracted twice?
+         pl_shield=pl_shield-hitpoints-(map_level-1)
          if pl_shield<0 then pl_shield=0
       else
          pl_life=pl_life-hitpoints-(map_level-1)
