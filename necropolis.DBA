@@ -1,13 +1,14 @@
 rem mavrick designs www.mavrick.co.uk
 rem Taken from the DB Demo CD, dated source code 24 January 2001
 rem Fixed by Daniel Marschall 11 Sep 2025 to make it compatible with DB Pro
-rem https://github.com/danielmarschall/necropolis
+rem and to fix a bunch of bugs and problems.
+rem Current version here: https://github.com/danielmarschall/necropolis
+rem License: Unknown (Freeware / Abandonware)
 
 rem ---
 
-rem TODO: Various bugs found during playing
+rem TODO: Various bugs found during playing:
 rem       - After death screen (if died from a sphere), the menu shows up with framerate 500 (you see the _fade_menu being extremely fast). But not always?
-rem       - When the sphere hits the player, the method _man_hit is not called. This is the reason why the health drains extremely fast and you die in 3 seconds. Not good?!
 rem       - Sphere only looks like it is cut in half. Is the picture not fully cut out from sphere1.bmp ? But get image t+300,... correctly uses width 146
 rem         Screenshot: sphere_looks_like_cut_in_half.jpg
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
@@ -428,12 +429,15 @@ _initialize:
    map_radar=-1
    rem 0=none 1=silver 2=silver+gold
    sphere_radar=0
+   
+   hit_timer=0
 
    rem Make player object
    gosub _make_player
 return
 
 _load_sounds:
+   rem TODO: Shouldn't monster and sphere sounds be 3D sounds bound to the objects?
    load sound "thunder.wav",2
    load sound "thunder2.wav",3
    load sound "ooh.wav",4
@@ -464,8 +468,9 @@ return
 
 rem decrease your shield and health
 _man_hit:
-   if sound playing(5) : rem TODO: when no sound is playing, the damages from enemies are too fast, because this check fails
-   else
+   hit_timer=hit_timer+1
+   if hit_timer>30 then hit_timer=0
+   if hit_timer=1
       if fg_sound=1 then play sound 5
       if pl_shield>0
          pl_shield=pl_shield-hitpoints-hitpoints-(map_level-1)
@@ -951,24 +956,29 @@ remend
                if ss>sv then sv=ss
             endif
             ay=wrapvalue(atanfull(dx,dz))
-              rotate object k+300,0,ay,0
-              rem Texture direction of decal
-              angle=300+(wrapvalue(object angle y(1) - spheredir(k))/30)
-              if angle<>spheretexture(k)
+            rotate object k+300,0,ay,0
+            rem Texture direction of decal
+            angle=300+(wrapvalue(object angle y(1) - spheredir(k))/30)
+            if angle<>spheretexture(k)
                texture object k+300,angle
                spheretexture(k)=angle
-              endif
+            endif
             dx=object position x(1)-object position x(300+k)
             dz=object position z(1)-object position z(300+k)
             if dx>-20 and dx<20 and dz>-20 and dz<20
                rem ***** sphere got me
-               hitpoints=int(map_level/3)
-               if pl_shield>0
-                  pl_shield=pl_shield-hitpoints
-                  if pl_shield<0 then pl_shield=0
-               else
-                  pl_life=pl_life-hitpoints
-                  if pl_life<0 then pl_life=0
+               hit_timer=hit_timer+1
+               if hit_timer>5 then hit_timer=0
+               if hit_timer = 1
+                  rem if fg_sound=1 then play sound xxx ... TODO: add individual sound effect, maybe a very short flesh effect
+                  hitpoints=int(map_level/3)
+                  if pl_shield>0
+                     pl_shield=pl_shield-hitpoints
+                     if pl_shield<0 then pl_shield=0
+                  else
+                     pl_life=pl_life-hitpoints
+                     if pl_life<0 then pl_life=0
+                  endif
                endif
             endif
          endif
@@ -976,7 +986,7 @@ remend
       if sv>-1 and fg_sound=1
          if sound playing(99)
          else
-            loop sound 99
+            loop sound 99 : rem Sphere sound
          endif
          if sv>60 then sv=60
          set sound volume 99,sv
