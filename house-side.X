@@ -82,7 +82,7 @@ Frame frm_Scene_Root {
      0.900000,0.900000,0.900000;;
      0.000000,0.000000,0.000000;;
      TextureFilename {
-      "hs-04.bmp";
+      "hs-03x.bmp";
      }
     }
     Material {
