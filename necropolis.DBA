@@ -1,16 +1,24 @@
 rem mavrick designs www.mavrick.co.uk
 rem Taken from the DB Demo CD, dated source code 24 January 2001
-rem Fixed by Daniel Marschall 10 Sep 2025 to make it compatible with DB Pro
+rem Fixed by Daniel Marschall 11 Sep 2025 to make it compatible with DB Pro
 rem https://github.com/danielmarschall/necropolis
 
 rem ---
 
 rem TODO: Various bugs found during playing
-rem       - After death screen (if died from a sphere), the menu shows up with framerate 500. Also, is it normal that the silver sphere kills you in 3 seconds?
+rem       - After death screen (if died from a sphere), the menu shows up with framerate 500 (you see the _fade_menu being extremely fast). But not always?
+rem       - When the sphere hits the player, the method _man_hit is not called. This is the reason why the health drains extremely fast and you die in 3 seconds. Not good?!
 rem       - Sphere only looks like it is cut in half. Is the picture not fully cut out from sphere1.bmp ? But get image t+300,... correctly uses width 146
 rem         Screenshot: sphere_looks_like_cut_in_half.jpg
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
+
+rem TODO: Things to check...
+rem       ... What happens if the spacegate room is adjacent to 2 corridors?
+rem           - Check if the door will be at the 4th wall and the 3 other walls have the barrels
+rem             I am not sure if add_door() will choose the same case 1,2,3,4 as _make_walls (spacegate walls = image 203)
+rem           - The player should only be able to enter through the door, not through other walls
+rem           Or: there could be multiple doors, but that would be hard because we only have one "object 400"
 
 rem ---
 
@@ -134,6 +142,7 @@ _play_game:
       sync
       ink rgb(255,255,255),0
       text 570,8,"Level "+Str$(map_level)
+      if debug=1 then text 570,32,"Debug "+Str$(debug_info)
    until pl_life=0
 
    if object exist(96)
@@ -336,7 +345,11 @@ _initialize:
    input_ctrl=0
 
    rem 0=full game 1=debugging on
+   global debug
    debug=0
+   global debug_info
+   debug_info=0
+   
    rem 0=corridors 1=caves
    maptype=1
 
@@ -866,16 +879,16 @@ remend
             dx=object position x(1)-object position x(k+260)
             dz=object position z(1)-object position z(k+260)
             if dx>-20 and dx<20 and dz>-20 and dz<20
-               if object_type(k)=0
+               if object_type(k)=0 : rem Player got life item
                   pl_life=pl_life+10
                   if pl_life>100 then pl_life=100
                   if fg_sound=1 then play sound 41
                endif
-               if object_type(k)=1
+               if object_type(k)=1 : rem Player got ammo item
                   pl_ammo=pl_ammo+8
                   if fg_sound=1 then play sound 40
                endif
-               if object_type(k)=2
+               if object_type(k)=2 : rem Player got the key item
                   pl_key=pl_key+1
                   if fg_sound=1 then play sound 43
                   load image "status2.bmp",204
@@ -883,7 +896,7 @@ remend
                   if map_level>1
                      for mmz=0 to mapz
                         for mmx=0 to mapx
-                           if getmap(mmx,mmz)=30 then setmap(mmx,mmz,1)
+                           if getmap(mmx,mmz)=30 then setmap(mmx,mmz,1) : rem Allow the spacegate room (30) to be entered (1)
                         next mmx
                      next mmz
                      rem Open door (transparent)
@@ -900,7 +913,7 @@ remend
                      set object 400,1,1,0
                   endif
                endif
-               if object_type(k)=3
+               if object_type(k)=3 : rem Placer got shield item
                   pl_shield=pl_shield+15
                   if pl_shield>100 then pl_shield=100
                   if fg_sound=1 then play sound 42
@@ -1186,7 +1199,7 @@ _make_level:
    old_life=0 : rem Force _show_status to redraw
    position object 1,(manx*300)+150,0,(manz*300)+150
    if map_level=1
-       gosub _make_status
+      gosub _make_status
    else
       show object 400
       show object 401
@@ -1311,6 +1324,7 @@ _make_map:
          setmap(x,z,0)
       next z
    next x
+   
    if maptype=1 or map_level=1
       rem Maptype caves or level 1
       if map_level=1
@@ -2249,21 +2263,20 @@ function add_door(rx,rz)
       endif
    endif
    texture object 400,400
-
+   
    if (getmap(rx,rz+1)>0 and getmap(rx,rz+1)<5) or getmap(rx,rz+1)=31
       position object 400,(rx*300)+150,155,(rz*300)+300
    endif
    if (getmap(rx+1,rz)>0 and getmap(rx+1,rz)<5) or getmap(rx+1,rz)=31
-      position object 400,(rx*300),155,(rz*300)
+      position object 400,(rx*300)+300,155,(rz*300)+150
+      rotate object 400,0,90,0
    endif
-
    if (getmap(rx,rz-1)>0 and getmap(rx,rz-1)<5) or getmap(rx,rz-1)=31
-      rotate object 400,0,0,0
       position object 400,(rx*300)+150,155,(rz*300)
    endif
    if (getmap(rx-1,rz)>0 and getmap(rx-1,rz)<5) or getmap(rx-1,rz)=31
-      rotate object 400,0,0,0
       position object 400,(rx*300),155,(rz*300)+150
+      rotate object 400,0,90,0
    endif
    set object 400,1,1,0
    hide object 400
@@ -2298,7 +2311,7 @@ function keepwithinmap(objid,snd)
    if hit=1
       if sound playing(4)
       else
-           if snd=1 then play sound 4
+         if snd=1 then play sound 4
       endif
    endif
 endfunction
