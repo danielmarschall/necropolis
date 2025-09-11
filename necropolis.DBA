@@ -21,9 +21,8 @@ rem           - Check if the door will be at the 4th wall and the 3 other walls 
 rem             I am not sure if add_door() will choose the same case 1,2,3,4 as _make_walls (spacegate walls = image 203)
 rem           - The player should only be able to enter through the door, not through other walls
 rem           Or: there could be multiple doors, but that would be hard because we only have one "object 400"
-rem       ... Do things like radar(s) and different gun types work? Or are they unimplemented?
 
-rem covers.qxd => Can we convert that in PSD so it can be displayed with more programs?
+rem covers.qxd => Can we convert that in PSD so it can be displayed with more programs? (Can Adobe InDesign open it?)
 
 rem ---
 
@@ -477,7 +476,7 @@ _man_hit:
    if hit_timer=1
       if fg_sound=1 then play sound 5 : rem ouch.wav
       if pl_shield>0
-         pl_shield=pl_shield-hitpoints-hitpoints-(map_level-1)
+         pl_shield=pl_shield-hitpoints-hitpoints-(map_level-1) : rem TODO: is it really intended that hitpoints is subtracted twice?
          if pl_shield<0 then pl_shield=0
       else
          pl_life=pl_life-hitpoints-(map_level-1)
@@ -767,35 +766,6 @@ remend
    rem monsters
    gosub _monster_position
 
-
-   rem DEBUG CODE to find bug "object not found" when shooting a dwarf
-   for k=10 to monster_num+10
-     if monster(k-10)>0
-       if monsterobject(k-10)>-1
-         if object exist(260+monsterobjectnum(k-10))
-         else
-           print "WARNING!!! ", monsterobjectnum(k-10), " at monster ", k
-           for k=0 to object_max
-               tmp$ = str$(k)
-               tmp$ = tmp$ + ":"
-               tmp$ = tmp$ + "monobj=" + str$(monsterobject(k)) + ", "
-               tmp$ = tmp$ + "mononum=" + str$(monsterobjectnum(k)) + ", "
-               if object exist(monsterobjectnum(k)+260)
-                   tmp$ = tmp$ + "obj OK, "
-               else
-                   tmp$ = tmp$ + "obj ERR, "
-               endif
-               tmp$ = tmp$ + "type=" + str$(object_type(k)) + ", "
-               tmp$ = tmp$ + "objects=" + str$(objects(k))
-               print tmp$
-           next k
-         endif
-       endif
-     endif
-   next k
-   rem END DEBUG CODE
-
-
    for k=10 to monster_num+10
       if monster(k-10)>0
          dx=object position x(k)-cx#
@@ -816,8 +786,6 @@ remend
                   if monsterobject(k-10)>-1
                      xp=object position x(k)
                      zp=object position z(k)
-                     rem TODO: Happened twice for me: "object does not exist" at "position object" after shooting a dwarf at stage 1
-                     rem       Added debug code above in order to easier find the issue
                      position object monsterobjectnum(k-10)+260,xp,30,zp
                      objects(monsterobjectnum(k-10))=1
                      object_type(monsterobjectnum(k-10))=monsterobject(k-10)
@@ -1189,6 +1157,7 @@ _make_level:
     rem ** place monsters
     objnum=5
     xx=0
+    objectnum=0
     for k=10 to monster_num+10
       monsterobject(k-10)=-1
       monster(k-10)=1
@@ -1220,7 +1189,7 @@ _make_level:
                xx=1
             endif
             monsterobject(k-10)=t
-            monsterobjectnum(k-10)=objectnum : rem TODO: objectnum is nowhere initialized?!
+            monsterobjectnum(k-10)=objectnum
             objectnum=objectnum+1
          endif
       endif
