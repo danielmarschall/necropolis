@@ -13,6 +13,7 @@ rem       - Sphere only looks like it is cut in half. Is the picture not fully c
 rem         Screenshot: sphere_looks_like_cut_in_half.jpg
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
+rem       - The radar does not show the full map. You can do "outside" the radar.
 
 rem TODO: Things to check...
 rem       ... What happens if the spacegate room is adjacent to 2 corridors?
@@ -21,6 +22,8 @@ rem             I am not sure if add_door() will choose the same case 1,2,3,4 as
 rem           - The player should only be able to enter through the door, not through other walls
 rem           Or: there could be multiple doors, but that would be hard because we only have one "object 400"
 rem       ... Do things like radar(s) and different gun types work? Or are they unimplemented?
+
+rem covers.qxd => Can we convert that in PSD so it can be displayed with more programs?
 
 rem ---
 
@@ -436,6 +439,7 @@ return
 
 _load_sounds:
    rem TODO: Shouldn't monster and sphere sounds be 3D sounds bound to the objects?
+   rem Sound 1 will be loaded at _make_level with either rain.wav (level 1) or wind.wav (level 2+)
    load sound "thunder.wav",2
    load sound "thunder2.wav",3
    load sound "ooh.wav",4
@@ -452,7 +456,7 @@ _load_sounds:
    load sound "grunt2.wav",19
    load sound "grunt3.wav",20
    load sound "grunt4.wav",21
-   load sound "shotgun1.wav",22 : rem TODO: this sound is useless!
+   load sound "shotgun1.wav",22 : rem TODO: this sound is useless, since it is never played!
    load sound "shotgun2.wav",23
    load sound "die1.wav",26
    load sound "die2.wav",27
@@ -462,6 +466,8 @@ _load_sounds:
    load sound "key.wav",43
    load sound "sphere.wav",99
    load sound "bang.wav",100
+   rem Sound 101 = tallman1.wav , only played once
+   rem Sound 107 = youdie.wav , only played once
 return
 
 rem decrease your shield and health
@@ -469,7 +475,7 @@ _man_hit:
    hit_timer=hit_timer+1
    if hit_timer>30 then hit_timer=0
    if hit_timer=1
-      if fg_sound=1 then play sound 5
+      if fg_sound=1 then play sound 5 : rem ouch.wav
       if pl_shield>0
          pl_shield=pl_shield-hitpoints-hitpoints-(map_level-1)
          if pl_shield<0 then pl_shield=0
@@ -488,10 +494,10 @@ _thunder:
       if bg_sound=1
          if rnd(2)=1
             set sound pan 3,-5000+rnd(10000)
-            play sound 3
+            play sound 3 : rem thunder2.wav
          else
             set sound pan 2,-5000+rnd(10000)
-            play sound 2
+            play sound 2 : rem thunder.wav
          endif
       endif
    endif
@@ -521,7 +527,7 @@ _move_shots:
                         if monsterhit(l-10)=1 then monsterhit(l-10)=100
                         monsterdie(l-10)=1
                      endif
-                     if fg_sound=1 then play sound 26+rnd(1)
+                     if fg_sound=1 then play sound 26+rnd(1) : rem die1.wav, die2.wav
                   endif
                endif
             next l
@@ -534,7 +540,7 @@ _move_shots:
                      hide object 160+k
                      manshot(k)=0
                      sphere(l)=0
-                     if fg_sound=1 then play sound 100
+                     if fg_sound=1 then play sound 100 : rem bang.wav
                   endif
                endif
             next l
@@ -620,10 +626,7 @@ _handle_player:
          yrotate object 160+sht,object angle y(1)
          show object 160+sht
          alowshot=10
-         if fg_sound=1
-            snd=22+mangun
-            play sound snd
-         endif
+         if fg_sound=1 then play sound 22+mangun : rem shotgun1.wav, shotgun2.wav
       endif
    endif
 
@@ -698,7 +701,7 @@ remstart
           ink rgb(255,255,255),0
           for obj=97 to 99
             if sphere(obj-97)=1
-                 if obj=99 then ink rgb(255,255,0),0
+               if obj=99 then ink rgb(255,255,0),0
                mx=204-((object position x(obj)/300)*4)
                my=(object position z(obj)/300)*4
                if obj<99 or sphere_radar=2 then box mx,my-1,mx+1,my
@@ -765,6 +768,32 @@ remend
    gosub _monster_position
 
 
+   rem DEBUG CODE to find bug "object not found" when shooting a dwarf
+   for k=10 to monster_num+10
+     if monster(k-10)>0
+       if monsterobject(k-10)>-1
+         if object exist(260+monsterobjectnum(k-10))
+         else
+           print "WARNING!!! ", monsterobjectnum(k-10), " at monster ", k
+           for k=0 to object_max
+               tmp$ = str$(k)
+               tmp$ = tmp$ + ":"
+               tmp$ = tmp$ + "monobj=" + str$(monsterobject(k)) + ", "
+               tmp$ = tmp$ + "mononum=" + str$(monsterobjectnum(k)) + ", "
+               if object exist(monsterobjectnum(k)+260)
+                   tmp$ = tmp$ + "obj OK, "
+               else
+                   tmp$ = tmp$ + "obj ERR, "
+               endif
+               tmp$ = tmp$ + "type=" + str$(object_type(k)) + ", "
+               tmp$ = tmp$ + "objects=" + str$(objects(k))
+               print tmp$
+           next k
+         endif
+       endif
+     endif
+   next k
+   rem END DEBUG CODE
 
 
    for k=10 to monster_num+10
@@ -788,6 +817,7 @@ remend
                      xp=object position x(k)
                      zp=object position z(k)
                      rem TODO: Happened twice for me: "object does not exist" at "position object" after shooting a dwarf at stage 1
+                     rem       Added debug code above in order to easier find the issue
                      position object monsterobjectnum(k-10)+260,xp,30,zp
                      objects(monsterobjectnum(k-10))=1
                      object_type(monsterobjectnum(k-10))=monsterobject(k-10)
@@ -864,7 +894,7 @@ remend
                            set sound volume snd,sndz
                         endif
                         set sound pan snd,-10000+(sndx*31)
-                        play sound snd
+                        play sound snd : rem dw1.wav, dw2.wav, dw3.wav, dw4.wav, gurgle1.wav, gurgle2.wav, gurgle3.wav, grunt5.wav, grunt1.wav, grunt2.wav, grund3.wav, grund4.wav
                      endif
                   endif
                endif
@@ -889,15 +919,15 @@ remend
                if object_type(k)=0 : rem Player got life item
                   pl_life=pl_life+10
                   if pl_life>100 then pl_life=100
-                  if fg_sound=1 then play sound 41
+                  if fg_sound=1 then play sound 41 : rem health.wav
                endif
                if object_type(k)=1 : rem Player got ammo item
                   pl_ammo=pl_ammo+8
-                  if fg_sound=1 then play sound 40
+                  if fg_sound=1 then play sound 40 : rem ammo.wav
                endif
                if object_type(k)=2 : rem Player got the key item
                   pl_key=pl_key+1
-                  if fg_sound=1 then play sound 43
+                  if fg_sound=1 then play sound 43 : rem key.wav
                   load image "status2.bmp",204
                   old_life=0 : rem Force _show_status to redraw
                   if map_level>1
@@ -923,7 +953,7 @@ remend
                if object_type(k)=3 : rem Placer got shield item
                   pl_shield=pl_shield+15
                   if pl_shield>100 then pl_shield=100
-                  if fg_sound=1 then play sound 42
+                  if fg_sound=1 then play sound 42 : rem shield.wav
                endif
                hide object 260+k
                objects(k)=-1
@@ -988,7 +1018,7 @@ remend
       if sv>-1 and fg_sound=1
          if sound playing(99)
          else
-            loop sound 99 : rem Sphere sound
+            loop sound 99 : rem sphere.wav
          endif
          if sv>60 then sv=60
          set sound volume 99,sv
@@ -1061,7 +1091,7 @@ _make_level:
    if object exist(2) then hide object 2
    if monsterkill>59 then map_radar=1
    if monsterkill>80 then sphere_radar=1
-   if monsterkill>119 then map_radar=0
+   if monsterkill>119 then map_radar=0 : rem TODO: why is the radar disabled after 120 kills?! This makes no sense, especially since we need it for the sphere_radar=2
    if monsterkill>140 then sphere_radar=2
    zombietype=1
    if map_level<6 then zombietype=rnd(1)
@@ -1227,7 +1257,7 @@ _make_level:
    if map_level=1
       show object 96
       show object 95
-      if bg_sound=1 then loop sound 1
+      if bg_sound=1 then loop sound 1 : rem rain.wav and wind.wav
    endif
    for k=10 to monster_num+10
       if monster(k-10)>0 then show object k
@@ -2323,10 +2353,10 @@ function keepwithinmap(objid,snd)
    next r
    position object objid,x#,0,z#
 
-   if hit=1
+   if hit=1 and fg_sound=1
       if sound playing(4)
       else
-         if snd=1 then play sound 4
+         play sound 4 : rem ooh.wav
       endif
    endif
 endfunction
