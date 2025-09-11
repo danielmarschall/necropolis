@@ -20,6 +20,7 @@ rem           - Check if the door will be at the 4th wall and the 3 other walls 
 rem             I am not sure if add_door() will choose the same case 1,2,3,4 as _make_walls (spacegate walls = image 203)
 rem           - The player should only be able to enter through the door, not through other walls
 rem           Or: there could be multiple doors, but that would be hard because we only have one "object 400"
+rem       ... Do things like radar(s) and different gun types work? Or are they unimplemented?
 
 rem ---
 
@@ -140,10 +141,11 @@ _play_game:
    repeat
       gosub _handle_player
       if map_level=1 then gosub _thunder
-      sync
       ink rgb(255,255,255),0
       text 570,8,"Level "+Str$(map_level)
-      if debug=1 then text 570,32,"Debug "+Str$(debug_info)
+      text 570,24,"Kills: "+Str$(monsterkill)
+      if debug=1 then text 570,40,"Debug "+Str$(debug_info)
+      sync
    until pl_life=0
 
    if object exist(96)
@@ -366,6 +368,7 @@ _initialize:
    zombietype=0
 
    rem gun type 0=none 1=shotgun 2=sawnoff 3=chainsaw
+   rem GUNS 2 and 3 NOT IMPLEMENTED!
    mangun=1
 
    grave_max=28
@@ -388,13 +391,11 @@ _initialize:
    rem ***** sphere data
    sphere_max=7
    sphere_num=7
-   rem sphere type 0=silver/slow 1=gold/fast 2=red/deadly
-   sphere_type=0
+   sphere_type=0 : rem sphere type 0=silver/slow 1=gold/fast 2=red/deadly
    dim sphere(sphere_max)
    dim spheredir(sphere_max)
    dim spheretexture(sphere_max)
-   rem respawn type 0=no respawn 1=respawn
-   dim spheretype(sphere_max)
+   dim spheretype(sphere_max) : rem respawn type 0=no respawn 1=respawn  (NOT IMPLEMENTED)
    dim spherespeed(sphere_max)
 
    alowshot=0
@@ -420,15 +421,12 @@ _initialize:
    dim monstercount(monster_max)
    dim monsterhit(monster_max)
    dim monsterdie(monster_max)
-   rem -1=no object 0=life 1=ammo 2=key 3=shield
-   dim monsterobject(monster_max)
+   dim monsterobject(monster_max) : rem -1=no object 0=life 1=ammo 2=key 3=shield
    dim monsterobjectnum(monster_max)
 
    rem map radar variables
-   rem -1=none 0=full >1=area around man
-   map_radar=-1
-   rem 0=none 1=silver 2=silver+gold
-   sphere_radar=0
+   map_radar=-1 : rem -1=none 0=full >1=area around man
+   sphere_radar=0 : rem 0=none 1=silver 2=silver+gold (NOT IMPLEMENTED)
    
    hit_timer=0
 
@@ -454,7 +452,7 @@ _load_sounds:
    load sound "grunt2.wav",19
    load sound "grunt3.wav",20
    load sound "grunt4.wav",21
-   load sound "shotgun1.wav",22
+   load sound "shotgun1.wav",22 : rem TODO: this sound is useless!
    load sound "shotgun2.wav",23
    load sound "die1.wav",26
    load sound "die2.wav",27
@@ -765,6 +763,10 @@ remend
    next k
    rem monsters
    gosub _monster_position
+
+
+
+
    for k=10 to monster_num+10
       if monster(k-10)>0
          dx=object position x(k)-cx#
@@ -1127,8 +1129,11 @@ _make_level:
    else
       set ambient light 70
    endif
-   fog distance 2500
-   fog on
+   if fog available()
+      fog distance 2500
+      fog color 0,0,0
+      fog on
+   endif
    if object exist(51) then hide object 51
    if object exist(52) then hide object 52
 
@@ -1637,7 +1642,7 @@ _make_radar:
       delete bitmap 7
       delete bitmap 6
       delete bitmap 5
-      delete object 51
+      if setup=0 then delete object 51
     endif
     ink rgb(125,125,125),0
     create bitmap 7,200,200
@@ -2215,7 +2220,7 @@ _move_sphere:
             z=(object position z(300+k))/300
             if getmap(x,z)=1
                if getmap(x-1,z)=1 and getmap(x+1,z)=1 and getmap(x,z+1)=1 and getmap(x,z-1)=1 and rnd(3)=1
-                    move object 300+k,-30
+                  move object 300+k,-30
                   spheredir(k)=wrapvalue(spheredir(k)-30)
                else
                   move object 300+k,spherespeed(k)-30
