@@ -2,7 +2,7 @@ rem Necropolis - City of the Dead
 rem (C) 2000 Mavrick Designs
 rem Taken from the DB Demo CD, dated source code 24 January 2001
 rem Fixed by Daniel Marschall to make it compatible with DB Pro and to fix a bunch of bugs and problems.
-rem Revision: 11 September 2025
+rem Revision: 12 September 2025
 rem Current version here: https://github.com/danielmarschall/necropolis
 rem License: Freeware / Abandonware
 
@@ -14,7 +14,6 @@ rem       - Sphere only looks like it is cut in half. Is the picture not fully c
 rem         Screenshot: sphere_looks_like_cut_in_half.jpg
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
-rem       - The radar does not show the full map. You can do "outside" the radar.
 
 rem TODO: Things to check...
 rem       ... What happens if the spacegate room is adjacent to 2 corridors?
@@ -145,7 +144,12 @@ _play_game:
       ink rgb(255,255,255),0
       text 570,8,"Level "+Str$(map_level)
       text 570,24,"Kills: "+Str$(monsterkill)
-      if debug=1 then text 570,40,"Debug "+Str$(debug_info)
+      if debug=1
+         text 570,40,"Debug "+Str$(debug_info)
+         mx=(object position x(1)/300)*4
+         mz=(object position z(1)/300)*4
+         text 570,56,"X "+Str$(mx)+" / Z "+Str$(mz)
+      endif
       sync
    until pl_life=0
 
@@ -676,7 +680,7 @@ _handle_player:
 
    rem **** radar scope
    if map_radar>-1
-      mx=200-((cx#/300)*4)
+      mx=(cx#/300)*4
       my=(cz#/300)*4
       set current bitmap 5
       cls
@@ -1056,9 +1060,9 @@ _make_level:
    if map_level=4 or map_level=7 or map_level=8 or map_level=12 then maptype=1
    if map_level>12 then maptype=rnd(2)
    if object exist(2) then hide object 2
-   if monsterkill>59 then map_radar=1
+   if monsterkill>59 then map_radar=1 : rem map_radar>=1 means "around man"
    if monsterkill>80 then sphere_radar=1
-   if monsterkill>119 then map_radar=0 : rem TODO: why is the radar disabled after 120 kills?! This makes no sense, especially since we need it for the sphere_radar=2
+   if monsterkill>119 then map_radar=0 : rem map_radar=0 means "full radar"
    if monsterkill>140 then sphere_radar=2
    zombietype=1
    if map_level<6 then zombietype=rnd(1)
@@ -1643,17 +1647,18 @@ _make_radar:
       if setup=0 then delete object 51
     endif
     ink rgb(125,125,125),0
-    create bitmap 7,200,200
+    create bitmap 7,204,204
     cls
-    create bitmap 6,200,200
+    create bitmap 6,204,204
     cls
-    for y=49 to 0 step -1
-        for x=0 to 49
-             if getmap(x,y)>0 then box 200-(x*4),y*4,203-(x*4),(y*4)+3
-        next x
-    next y
-    get image 5,0,0,200,200
-    create bitmap 5,200,200
+    for x=0 to mapx
+       for z=0 to mapz
+          rem TODO: it would be good if the spacegate room was marked in a different color
+          if getmap(x,z)>0 then box x*4, z*4, (x*4)+3, (z*4)+3
+       next z
+    next x
+    get image 5,0,0,204,204
+    create bitmap 5,204,204
     if setup=0 then make object plain 51,200,200
     lock object on 51
     position object 51,-530,-380,800
