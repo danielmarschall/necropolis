@@ -14,6 +14,7 @@ rem       - Sphere only looks like it is cut in half. Is the picture not fully c
 rem         Screenshot: sphere_looks_like_cut_in_half.jpg
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
+rem       - Sphere sound keeps looping during the loading screen of the next level
 
 rem TODO: Things to check...
 rem       ... What happens if the spacegate room is adjacent to 2 corridors?
@@ -146,9 +147,11 @@ _play_game:
       text 570,24,"Kills: "+Str$(monsterkill)
       if debug=1
          text 570,40,"Debug "+Str$(debug_info)
+         remstart
          mx=(object position x(1)/300)*4
          mz=(object position z(1)/300)*4
          text 570,56,"X "+Str$(mx)+" / Z "+Str$(mz)
+         remend
       endif
       sync
    until pl_life=0
@@ -431,7 +434,7 @@ _initialize:
 
    rem map radar variables
    map_radar=-1 : rem -1=none 0=full >1=area around man
-   sphere_radar=0 : rem 0=none 1=silver 2=silver+gold (NOT IMPLEMENTED)
+   sphere_radar=0 : rem 0=none 1=silver 2=silver+gold
    
    hit_timer=0
 
@@ -681,38 +684,40 @@ _handle_player:
    rem **** radar scope
    if map_radar>-1
       mx=(cx#/300)*4
-      my=(cz#/300)*4
+      mz=(mapz-(cz#/300))*4
       set current bitmap 5
       cls
       if map_radar>0
         lb=mx-10
         rb=mx+10
-        tb=my-10
-        bb=my+10
+        tb=mz-10
+        bb=mz+10
         copy bitmap 6,lb,tb,rb,bb,7,lb,tb,rb,bb
         copy bitmap 7,5
       else
         copy bitmap 6,5
       endif
+      rem TODO: man and sphere position can be one pixel off the path, depending if you walk at the left or right side of the corridor
       rem man position
       ink rgb(255,0,0),0
-      box mx,my,mx+3,my+3
+      box mx,mz,mx+3,mz+3
       rem sphere position
-remstart
       if sphere_radar>0
-          ink rgb(255,255,255),0
-          for obj=97 to 99
-            if sphere(obj-97)=1
-               if obj=99 then ink rgb(255,255,0),0
-               mx=204-((object position x(obj)/300)*4)
-               my=(object position z(obj)/300)*4
-               if obj<99 or sphere_radar=2 then box mx,my-1,mx+1,my
-            endif
-         next obj
+         for k=0 to sphere_num
+            ink rgb(255,255,0),0
+            mx=(object position x(300+k)/300)*4
+            mz=(mapz-(object position z(300+k)/300))*4
+            if (sphere_type<2) or (sphere_radar=2) then box mx,mz-3,mx+3,mz
+         next k
       endif
-remend
       rem copy bitmap to object for screen
-      get image 5,0,0,200,200
+      
+      
+      rem These two lines are required for some reason, otherwise image will be wrong scaled on second update of the HUD
+      load image "map.bmp",5
+      delete image 5
+      
+      get image 5,0,0,204,204
       texture object 51,5
       set current bitmap 0
    endif
@@ -973,7 +978,7 @@ remend
                hit_timer=hit_timer+1
                if hit_timer>5 then hit_timer=0
                if hit_timer = 1
-                  rem if fg_sound=1 then play sound xxx ... TODO: add individual sound effect, maybe a very short flesh effect
+                  rem if fg_sound=1 then play sound XYZ ... TODO: add individual sound effect, maybe a very short flesh effect
                   hitpoints=int(map_level/3)
                   if pl_shield>0
                      pl_shield=pl_shield-hitpoints
@@ -1654,14 +1659,21 @@ _make_radar:
     for x=0 to mapx
        for z=0 to mapz
           rem TODO: it would be good if the spacegate room was marked in a different color
-          if getmap(x,z)>0 then box x*4, z*4, (x*4)+3, (z*4)+3
+          if getmap(x,z)>0 then box x*4, (mapz-z)*4, (x*4)+3, ((mapz-z)*4)+3
        next z
     next x
+
+    rem These two lines are required for some reason, otherwise image will be wrong scaled on second update of the HUD
+    load image "map.bmp", 5
+    delete image 5
+
     get image 5,0,0,204,204
     create bitmap 5,204,204
-    if setup=0 then make object plain 51,200,200
-    lock object on 51
-    position object 51,-530,-380,800
+    if setup=0 then make object plain 51,204,204
+    lock object on 51 : rem xxx TODO: "object does not exist" when restart game with radar
+    
+rem    position object 51,-530,-340,800
+    position object 51,-285,-190,500
 rem    ghost object on 51
     texture object 51,5
     hide object 51
@@ -2267,6 +2279,9 @@ function addwall(rx,rz,objid,limbid,voffset)
 endfunction limbid
 
 function add_door(rx,rz)
+   rem TODO: At cave levels, the doors are still rotated by 90 degree
+   rem       Screenshots: door_wrong_rotated1.jpg and door_wrong_rotated2.jpg
+
    if object exist(400)
    else
       make object plain 400,302,302
@@ -2283,16 +2298,20 @@ function add_door(rx,rz)
    texture object 400,400
    
    if (getmap(rx,rz+1)>0 and getmap(rx,rz+1)<5) or getmap(rx,rz+1)=31
+      debug_info=1
       position object 400,(rx*300)+150,155,(rz*300)+300
    endif
    if (getmap(rx+1,rz)>0 and getmap(rx+1,rz)<5) or getmap(rx+1,rz)=31
+      debug_info=2
       position object 400,(rx*300)+300,155,(rz*300)+150
       rotate object 400,0,90,0
    endif
    if (getmap(rx,rz-1)>0 and getmap(rx,rz-1)<5) or getmap(rx,rz-1)=31
+      debug_info=3
       position object 400,(rx*300)+150,155,(rz*300)
    endif
    if (getmap(rx-1,rz)>0 and getmap(rx-1,rz)<5) or getmap(rx-1,rz)=31
+      debug_info=4
       position object 400,(rx*300),155,(rz*300)+150
       rotate object 400,0,90,0
    endif
