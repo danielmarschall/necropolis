@@ -12,6 +12,8 @@ rem TODO: Various bugs found during playing:
 rem       - After death screen (if died from a sphere), the menu shows up with framerate 500 (you see the _fade_menu being extremely fast). But not always?
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
+rem       - Door to spacegate room is suddenly invisible or missing! Debug shows that non of the 4 cases in add_door() applied
+rem         Screenshot: add_door_failed.jpg
 
 rem TODO: Things to check...
 rem       ... What happens if the spacegate room is adjacent to 2 corridors?
@@ -19,6 +21,7 @@ rem           - Check if the door will be at the 4th wall and the 3 other walls 
 rem             I am not sure if add_door() will choose the same case 1,2,3,4 as _make_walls (spacegate walls = image 203)
 rem           - The player should only be able to enter through the door, not through other walls
 rem           Or: there could be multiple doors, but that would be hard because we only have one "object 400"
+rem       ... Check old patches I have written and see if there is anything to add in here
 
 rem ---
 
@@ -1483,7 +1486,7 @@ _make_map_corridors:
 
    gosub _make_spacegate
 
-   rem **** texture wals
+   rem **** texture walls
    for x=1 to mapx-1
       for y=1 to mapz-1
          t=1
@@ -2287,17 +2290,22 @@ function add_door(rx,rz)
    endif
    texture object 400,400
    
+   debug_info=8
    if (getmap(rx,rz+1)>0 and getmap(rx,rz+1)<5) or getmap(rx,rz+1)=31
+      debug_info=1
       position object 400,(rx*300)+150,155,(rz*300)+300
    endif
    if (getmap(rx+1,rz)>0 and getmap(rx+1,rz)<5) or getmap(rx+1,rz)=31
+      debug_info=2
       position object 400,(rx*300)+300,155,(rz*300)+150
       rotate object 400,0,90,0
    endif
    if (getmap(rx,rz-1)>0 and getmap(rx,rz-1)<5) or getmap(rx,rz-1)=31
+      debug_info=3
       position object 400,(rx*300)+150,155,(rz*300)
    endif
    if (getmap(rx-1,rz)>0 and getmap(rx-1,rz)<5) or getmap(rx-1,rz)=31
+      debug_info=4
       position object 400,(rx*300),155,(rz*300)+150
       rotate object 400,0,90,0
    endif
