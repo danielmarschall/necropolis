@@ -207,7 +207,6 @@ _play_game:
    gosub _fade_menu
 return
 
-
 _get_menu:
    repeat
       gosub _fade_menu
@@ -396,7 +395,7 @@ _initialize:
    dim sphere(sphere_max)
    dim spheredir(sphere_max)
    dim spheretexture(sphere_max)
-   dim spheretype(sphere_max) : rem respawn type 0=no respawn 1=respawn  (NOT IMPLEMENTED)
+   dim sphererespawn(sphere_max) : rem respawn type 0=no respawn 1=respawn  (NOT IMPLEMENTED)
    dim spherespeed(sphere_max)
 
    alowshot=0
@@ -529,6 +528,7 @@ _move_shots:
                endif
             next l
             for l=0 to sphere_num
+               tmp_sphere_exists=0
                if sphere(l)>0
                   mx=object position x(300+l)
                   mz=object position z(300+l)
@@ -539,7 +539,9 @@ _move_shots:
                      sphere(l)=0
                      if fg_sound=1 then play sound 100 : rem bang.wav
                   endif
+                  if sphere(l)=1 then tmp_sphere_exists=1
                endif
+               if tmp_sphere_exists=0 then stop sound 99 : rem sphere.wav
             next l
          endif
       endif
