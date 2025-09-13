@@ -2,9 +2,8 @@ rem Necropolis - City of the Dead
 rem (C) 2000 Mavrick Designs
 rem Taken from the DB Demo CD, dated source code 24 January 2001
 rem Fixed by Daniel Marschall to make it compatible with DB Pro and to fix a bunch of bugs and problems.
-rem Revision: 13 September 2025
-rem Current version here: https://github.com/danielmarschall/necropolis
 rem License: Freeware / Abandonware
+version$="2025-09-13" : rem Current version here: https://github.com/danielmarschall/necropolis
 
 rem ---
 
@@ -13,12 +12,11 @@ rem       - At the cave level (where statues3.bmp objects are), there are blank 
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
 
 rem TODO: Things to check...
-rem       ... What happens if the spacegate room is adjacent to 2 corridors?
+rem       ... What happens (or is it possible) if the spacegate room is adjacent to 2 corridors?
 rem           - Check if the door will be at the 4th wall and the 3 other walls have the barrels
 rem             I am not sure if add_door() will choose the same case 1,2,3,4 as _make_walls (spacegate walls = image 203)
 rem           - The player should only be able to enter through the door, not through other walls
 rem           Or: there could be multiple doors, but that would be hard because we only have one "object 400"
-rem       ... Check old patches I have written and see if there is anything to add in here
 
 rem Nice to have for the future:
 rem - Monsters should not spawn beside the player, otherwise you might be instant dead at the first frames
@@ -29,8 +27,6 @@ rem ---
 
 rem Must not use #include, because DarkBASIC Pro IDE already includes it
 rem #include "warp.dba"
-
-version$="2025-09-13"
 
 rem Fix: Changed from 16 to 32 bits, because 16 bits is not supported by some hardware, such as AMD Radeon HD 7350
 set display mode 640,480,32
@@ -119,6 +115,7 @@ _setup_menu:
    rem menu selection variables
    set text font "times"
    set text size 27
+   set text to normal
    fade=60
    fadedir=0
    menu=1
@@ -141,6 +138,10 @@ _play_game:
    pl_key=0
    map_level=1
    make=0
+   rem TODO: The code did not contain "monsterkill=0", so the killed monster counter does not gets reset
+   rem       on level restart. It is unknown if this is intentional (to give the player a chance to get the
+   rem       radar quicker) or an oversight (since a restart should usually be a real restart).
+   rem monsterkill=0
    gosub _make_level
 
    repeat
@@ -438,7 +439,7 @@ _initialize:
    map_radar=0 : rem 0=none, 1=area around man, 2=full
    sphere_radar=0 : rem 0=none 1=silver 2=silver+gold
    
-   hit_timer=0
+   hit_timer#=0.0
 
    rem Make player object
    gosub _make_player
@@ -478,9 +479,9 @@ return
 
 rem decrease your shield and health
 _man_hit:
-   hit_timer=hit_timer+1
-   if hit_timer>20 then hit_timer=0
-   if hit_timer=1
+   hit_timer#=hit_timer#+1
+   if hit_timer#>20 then hit_timer#=0
+   if hit_timer#=1
       if fg_sound=1 then play sound 5 : rem ouch.wav
       if pl_shield>0
          pl_shield=pl_shield-hitpoints-(map_level-1)
@@ -580,7 +581,7 @@ _handle_player:
    animstate=1
    walkstate=14
    revstate=-14
-   prev_hit_timer=hit_timer
+   prev_hit_timer#=hit_timer#
 
    if upkey()=1 or (joystick up()=1 and input_ctrl=1) then move object 1,walkstate : animstate=2
    if downkey()=1 or (joystick down()=1 and input_ctrl=1) then move object 1,revstate : animstate=2
@@ -979,9 +980,9 @@ _handle_player:
             dz=object position z(1)-object position z(300+k)
             if dx>-20 and dx<20 and dz>-20 and dz<20
                rem ***** sphere got me
-               hit_timer=hit_timer+1
-               if hit_timer>5 then hit_timer=0
-               if hit_timer = 1
+               hit_timer#=hit_timer#+1
+               if hit_timer#>5 then hit_timer#=0
+               if hit_timer# = 1
                   rem if fg_sound=1 then play sound XYZ ... TODO: add individual sound effect, maybe a very short flesh effect
                   hitpoints=int(map_level/3)
                   if pl_shield>0
@@ -1006,13 +1007,15 @@ _handle_player:
 
    if memo_num>0
       ink rgb(255,0,0),0
-      center text 320,430,memo$
+      center text 320,410,memo$
       memo_num=memo_num-1
    endif
 
    gosub _show_status
 
-   if prev_hit_timer=hit_timer and hit_timer>0 then hit_timer=hit_timer-1 : rem allows the first attack after a pause be successful again (important for short contacts such as zombie flesh)
+   rem allows the first attack after a pause be successful again (important for short contacts such as zombie flesh)
+   rem You must not subtract 1, because otherwise the spheres would be too deadly (as they seem to hit and miss in alternating frames)
+   if prev_hit_timer#=hit_timer# and hit_timer#>0 then hit_timer#=hit_timer#-0.2
 return
 
 _make_objects:
