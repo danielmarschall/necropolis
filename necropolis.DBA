@@ -426,7 +426,7 @@ _initialize:
    dim monsterobjectnum(monster_max)
 
    rem map radar variables
-   map_radar=-1 : rem -1=none 0=full >1=area around man
+   map_radar=0 : rem 0=none, 1=area around man, 2=full
    sphere_radar=0 : rem 0=none 1=silver 2=silver+gold
    
    hit_timer=0
@@ -675,12 +675,13 @@ _handle_player:
    cz#=newzvalue(object position z(1),ca#,cdis#)
 
    rem **** radar scope
-   if map_radar>-1
+   if map_radar>0
       mx=(cx#/300)*4
       mz=(mapz-(cz#/300))*4
       set current bitmap 5
       cls
-      if map_radar>0
+      if map_radar=1
+        rem Area around man
         lb=mx-10
         rb=mx+10
         tb=mz-10
@@ -688,6 +689,7 @@ _handle_player:
         copy bitmap 6,lb,tb,rb,bb,7,lb,tb,rb,bb
         copy bitmap 7,5
       else
+        rem Full radar
         copy bitmap 6,5
       endif
       rem TODO: man and sphere position can be one pixel off the path, depending if you walk at the left or right side of the corridor
@@ -1058,9 +1060,9 @@ _make_level:
    if map_level=4 or map_level=7 or map_level=8 or map_level=12 then maptype=1
    if map_level>12 then maptype=rnd(2)
    if object exist(2) then hide object 2
-   if monsterkill>59 then map_radar=1 : rem map_radar>=1 means "around man"
+   if monsterkill>59 then map_radar=1 : rem map_radar=1 means "around man"
    if monsterkill>80 then sphere_radar=1
-   if monsterkill>119 then map_radar=0 : rem map_radar=0 means "full radar"
+   if monsterkill>119 then map_radar=2 : rem map_radar=2 means "full radar"
    if monsterkill>140 then sphere_radar=2
    zombietype=1
    if map_level<6 then zombietype=rnd(1)
@@ -1145,7 +1147,7 @@ _make_level:
       _stop_warp(fg_sound)
    endif
 
-    if map_radar>-1 then gosub _make_radar
+    if map_radar>0 then gosub _make_radar
     gosub _make_graves
 
     gosub _sphere_position
@@ -1222,7 +1224,7 @@ _make_level:
    show object 1
    show object 2
 
-   if map_radar>-1 then show object 51
+   if map_radar>0 then show object 51
    if pl_stats=1 then show object 52
    if map_level=1
       show object 96
@@ -1395,7 +1397,7 @@ _make_map:
             repeat
                x=x+1
                ck=checkmap(x,z)
-               if ck<>ck_on then   spacegate=1
+               if ck<>ck_on then spacegate=1
                if spacegate=0
                   if x>46
                      x=1
