@@ -710,11 +710,7 @@ _handle_player:
       rem copy bitmap to object for screen
       
       
-      rem These two lines are required for some reason, otherwise image will be wrong scaled on second update of the HUD
-      load image "map.bmp",5
-      delete image 5
-      
-      get image 5,0,0,204,204
+      get image 5,0,0,204,204,3
       texture object 51,5
       set current bitmap 0
    endif
@@ -1670,11 +1666,7 @@ _make_radar:
        next z
     next x
 
-    rem These two lines are required for some reason, otherwise image will be wrong scaled on second update of the HUD
-    load image "map.bmp", 5
-    delete image 5
-
-    get image 5,0,0,204,204
+    get image 5,0,0,204,204,3
     create bitmap 5,204,204
     if setup=0 then make object plain 51,204,204
     lock object on 51
@@ -1694,12 +1686,8 @@ _show_status:
       text 50,6,str$(pl_life)
       text 150,6,str$(pl_shield)
       text 250,6,str$(pl_ammo)
-      
-      rem These two lines are required for some reason, otherwise image will be wrong scaled on second update of the HUD
-      load image "status.bmp", 205
-      delete image 205
 
-      get image 205,0,0,300,25
+      get image 205,0,0,300,25,3
       texture object 52,205
       old_life=pl_life
       old_ammo=pl_ammo
