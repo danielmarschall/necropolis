@@ -12,7 +12,6 @@ rem TODO: Various bugs found during playing:
 rem       - After death screen (if died from a sphere), the menu shows up with framerate 500 (you see the _fade_menu being extremely fast). But not always?
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
-rem       - Zombie flesh hits the player => nearly makes no damage. Is the hit delay timer faulty?
 
 rem TODO: Things to check...
 rem       ... What happens if the spacegate room is adjacent to 2 corridors?
@@ -155,10 +154,8 @@ _play_game:
       sync
    until pl_life=0
 
-   if object exist(96)
-      delete object 96
-      delete object 95
-   endif
+   if object exist(95) delete object 95
+   if object exist(96) delete object 96
    if object exist(2) then delete object 2
    stop sound 1 : rem Stop rain.wav or wind.wav
    stop sound 99 : rem Stop sphere sound
@@ -1823,6 +1820,8 @@ _make_walls:
             rem Create walls for this tile
             if map_level=1
                if getmap(rx,rz)=1 then limb=addwall(rx,rz,4,limb,voffset)
+               if object exist(400) then delete object 400 : rem Remove door (if restarted game)
+               if object exist(401) then delete object 401 : rem Remove spacegate (if restarted game)
             else
                if maptype=1
                   if getmap(rx,rz)=30
