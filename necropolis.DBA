@@ -1067,10 +1067,10 @@ _make_level:
     if map_level=4 or map_level=7 or map_level=8 or map_level=12 then maptype=1
     if map_level>12 then maptype=rnd(2)
     if object exist(2) then hide object 2
-    if monsterkill>59 then map_radar=1 : rem map_radar=1 means "around man"
-    if monsterkill>80 then sphere_radar=1
-    if monsterkill>119 then map_radar=2 : rem map_radar=2 means "full radar"
-    if monsterkill>140 then sphere_radar=2
+    if monsterkill>=60 then map_radar=1 : rem map_radar=1 means "around man"
+    if monsterkill>=80 then sphere_radar=1
+    if monsterkill>=120 then map_radar=2 : rem map_radar=2 means "full radar"
+    if monsterkill>=140 then sphere_radar=2
     zombietype=1
     if map_level<6 then zombietype=rnd(1)
     if map_level<3 then zombietype=0
