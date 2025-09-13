@@ -854,8 +854,7 @@ _handle_player:
                   snd=10+rnd(3)
                   if monstertype(k-10)=2 then snd=snd+4
                   if abs(dx)<310 and abs(dz)<310 then snd=snd+4
-                  if sound playing(snd)
-                  else
+                  if not sound playing(snd)
                      sndz=int((2000-(dz+dx))/20)
                      if sndz>100 then sndz=100
                      if sndz>2 and rnd(18)=2
@@ -987,8 +986,7 @@ _handle_player:
          endif
       endif
       if sv>-1 and fg_sound=1
-         if sound playing(99)
-         else
+         if not sound playing(99)
             loop sound 99 : rem sphere.wav
          endif
          if sv>60 then sv=60
@@ -1096,8 +1094,7 @@ _make_level:
    gosub _setup_textures
 
    if map_level=2
-      if object exist(401)
-      else
+      if not object exist(401)
          make object plain 401,128,128
       endif
       load image "spgate.bmp",402
@@ -1333,251 +1330,261 @@ _make_player:
    endif
 return
 
-_make_map:
-   rem Generate block map for room
-   dim map(mapx,mapz)
-   for x=0 to mapx
-      for z=0 to mapz
-         setmap(x,z,0)
+_make_map_level1:
+   for x=10 to 35
+      for z=10 to 35
+         setmap(x,z,1)
       next z
    next x
-   
-   if maptype=1 or map_level=1
-      rem Maptype caves or level 1
-      if map_level=1
-         for x=10 to 35
-            for z=10 to 35
-               setmap(x,z,1)
-            next z
-         next x
-         manx=28
-         manz=28
-      else
-         rx=25 : rz=25 : setmap(rx,rz,1)
-         brx=rx
-         brz=rz
-         for t=0 to 300
-             direction=rnd(4)
-             if direction=0 then rx=rx+1
-             if direction=1 then rx=rx-1
-             if direction=2 then rz=rz+1
-             if direction=3 then rz=rz-1
-             
-             rem if rx>1 and rx<mapx-3 and rz>1 and rz<mapz-3 then setmap(rx,rz,1)
-             if rx < 2      then rx = 2
-             if rx > mapx-4 then rx = mapx-4
-             if rz < 2      then rz = 2
-             if rz > mapz-4 then rz = mapz-4
-             setmap(rx,rz,1)
-             manx=rx
-             manz=rz
-         next t
+   manx=28
+   manz=28
+return
 
-         rem *** spacegate code 1
-         x=1
-         z=1
-         ck_on=checkmap(1,1)
-         spacegate=0
-
-         if ck_on=1
-            repeat
-               z=z+1
-               ck=checkmap(x,z)
-               if ck=0
-                  spacegate=1
-                  z=z-1
-               endif
-            until (spacegate=1) or (z>45)
-         endif
-
-         if spacegate=0
-            z=1
-
-            repeat
-               x=x+1
-               ck=checkmap(x,z)
-               if ck<>ck_on then spacegate=1
-               if spacegate=0
-                  if x>46
-                     x=1
-                     z=z+1
-                  endif
-                  x1=x
-                  z1=z   
-               endif
-            until spacegate=1
-            x=x1
-            z=z1
-         endif
-
-         gosub _make_spacegate
-      endif
-   else
-      rem Maptype corridors or level 1
-      size=4
-      old_dir=-1
-      limits=(size*5)
-      rand_size=size*2
-      length_size=((rnd(size)+1)*3)+2
-      brx=((rnd(size)+1)*2)+4
-      brz=((rnd(size)+1)*2)+4
-      rx=brx
-      rz=brz
-      manx=rx
-      manz=rz
-      setmap(rx,rz,1)
-      direction=0
-
-      for k=0 to rand_size*5
-         length=rnd(length_size)*2
-         for l=1 to length
-            if direction=0 then rx=rx+1
-            if direction=1 then rx=rx-1
-            if direction=2 then rz=rz+1
-            if direction=3 then rz=rz-1
-            if rx=0
-              if l-((l/2)*2)<>0 then rx=3 else rx=2
-            endif
-            if rx=limits
-              if l-((l/2)*2)<>0 then rx=limits-1 else rx=limits-2
-            endif
-            if rz=0
-              if l-((l/2)*2)<>0 then rz=3 else rz=2
-            endif
-            if rz=limits
-              if l-((l/2)*2)<>0 then rz=limits-1 else rz=limits-2
-            endif
-            setmap(rx,rz,1)
-         next l
-         repeat
-            direction=rnd(4)
-         until direction<>old_dir
-         old_dir=direction
-      next k
-      brx=rx
-      brz=rz
-
-      rem **** spacegate code 2
-      spacegate=0
-      x=1
-      z=1
-      ck_on=checkmap(1,1)
+_make_map_cave:
+   rx=25 : rz=25 : setmap(rx,rz,1)
+   brx=rx
+   brz=rz
+   for t=0 to 300
+       direction=rnd(4)
+       if direction=0 then rx=rx+1
+       if direction=1 then rx=rx-1
+       if direction=2 then rz=rz+1
+       if direction=3 then rz=rz-1
+       
+       rem if rx>1 and rx<mapx-3 and rz>1 and rz<mapz-3 then setmap(rx,rz,1)
+       if rx < 2      then rx = 2
+       if rx > mapx-4 then rx = mapx-4
+       if rz < 2      then rz = 2
+       if rz > mapz-4 then rz = mapz-4
+       setmap(rx,rz,1)
+       manx=rx
+       manz=rz
+   next t
+ 
+   rem *** spacegate code 1
+   x=1
+   z=1
+   ck_on=checkmap(1,1)
+   spacegate=0
+ 
+   if ck_on=1
       repeat
-         ck=checkmap(x,z)
-         if ck<>ck_on
-            if ck_on=1
-               if x>1 then x=x-1
-            endif
-            spacegate=1
-         else
-            x=x+1
-            if x=limits-3
-              x=1
-              z=z+1
-            endif
-         endif
-      until spacegate=1
-      spacegate=0
-      rz=z
-      ck_on=checkmap(1,1)
-      repeat
+         z=z+1
          ck=checkmap(x,z)
          if ck=0
             spacegate=1
             z=z-1
          endif
-         if z=47
-            spacegate=1
-            z=rz
+      until (spacegate=1) or (z>45)
+   endif
+ 
+   if spacegate=0
+      z=1
+ 
+      repeat
+         x=x+1
+         ck=checkmap(x,z)
+         if ck<>ck_on then spacegate=1
+         if spacegate=0
+            if x>46
+               x=1
+               z=z+1
+            endif
+            x1=x
+            z1=z   
          endif
-         if spacegate=0 then z=z+1
       until spacegate=1
+      x=x1
+      z=z1
+   endif
+ 
+   gosub _make_spacegate
+return
 
-      gosub _make_spacegate
+_make_map_corridors:
+   size=4
+   old_dir=-1
+   limits=(size*5)
+   rand_size=size*2
+   length_size=((rnd(size)+1)*3)+2
+   brx=((rnd(size)+1)*2)+4
+   brz=((rnd(size)+1)*2)+4
+   rx=brx
+   rz=brz
+   manx=rx
+   manz=rz
+   setmap(rx,rz,1)
+   direction=0
 
-      rem **** texture wals
-      for x=1 to 49
-         for y=1 to 49
-            t=1
-            gosub _check_pos
-         next y
-      next x
-      for x=1 to 49
-         for y=1 to 49
-            t=3
-            gosub _check_pos
-         next y
-      next x
-      for x=1 to 49
-         for y=1 to 49
-            t=3
-            gosub _check_pos
-         next y
-      next x
+   for k=0 to rand_size*5
+      length=rnd(length_size)*2
+      for l=1 to length
+         if direction=0 then rx=rx+1
+         if direction=1 then rx=rx-1
+         if direction=2 then rz=rz+1
+         if direction=3 then rz=rz-1
+         if rx=0
+           if l-((l/2)*2)<>0 then rx=3 else rx=2
+         endif
+         if rx=limits
+           if l-((l/2)*2)<>0 then rx=limits-1 else rx=limits-2
+         endif
+         if rz=0
+           if l-((l/2)*2)<>0 then rz=3 else rz=2
+         endif
+         if rz=limits
+           if l-((l/2)*2)<>0 then rz=limits-1 else rz=limits-2
+         endif
+         setmap(rx,rz,1)
+      next l
+      repeat
+         direction=rnd(4)
+      until direction<>old_dir
+      old_dir=direction
+   next k
+   brx=rx
+   brz=rz
+
+   rem **** spacegate code 2
+   spacegate=0
+   x=1
+   z=1
+   ck_on=checkmap(1,1)
+   repeat
+      ck=checkmap(x,z)
+      if ck<>ck_on
+         if ck_on=1
+            if x>1 then x=x-1
+         endif
+         spacegate=1
+      else
+         x=x+1
+         if x=limits-3
+           x=1
+           z=z+1
+         endif
+      endif
+   until spacegate=1
+   spacegate=0
+   rz=z
+   ck_on=checkmap(1,1)
+   repeat
+      ck=checkmap(x,z)
+      if ck=0
+         spacegate=1
+         z=z-1
+      endif
+      if z=47
+         spacegate=1
+         z=rz
+      endif
+      if spacegate=0 then z=z+1
+   until spacegate=1
+
+   gosub _make_spacegate
+
+   rem **** texture wals
+   for x=1 to 49
+      for y=1 to 49
+         t=1
+         gosub _check_pos
+      next y
+   next x
+   for x=1 to 49
+      for y=1 to 49
+         t=3
+         gosub _check_pos
+      next y
+   next x
+   for x=1 to 49
+      for y=1 to 49
+         t=3
+         gosub _check_pos
+      next y
+   next x
+return
+
+_make_map:
+   rem Clear map array
+   for x=0 to mapx
+      for z=0 to mapz
+         setmap(x,z,0)
+      next z
+   next x
+
+   rem Generate block map for room
+   if map_level=1
+      gosub _make_map_level1
+   else
+      if maptype=1
+         gosub _make_map_cave
+      else
+         gosub _make_map_corridors
+      endif
    endif
 return
 
 _make_spacegate:
-      rem **** spacegate
-      setmap(x+1,z+1,30)
-      setmap(x+1,z+2,30)
-      setmap(x+2,z+1,30)
-      setmap(x+2,z+2,30)
-      position object 401,(x+2)*300,80,(z+2)*300
-      hide object 401
+   rem **** spacegate
+   setmap(x+1,z+1,30)
+   setmap(x+1,z+2,30)
+   setmap(x+2,z+1,30)
+   setmap(x+2,z+2,30)
+   position object 401,(x+2)*300,80,(z+2)*300
+   hide object 401
 
-      rx=-1
-      rz=-1
-      if z>1
-         if getmap(x+1,z-1)=1 then rx=x+1
-         if getmap(x+2,z-1)=1 then rx=x+2
-         if rx>-1 then rz=z
+   rx=-1
+   rz=-1
+   if z>1
+      if getmap(x+1,z-1)=1 then rx=x+1
+      if getmap(x+2,z-1)=1 then rx=x+2
+      if rx>-1 then rz=z
+   endif
+   if rx=-1
+      if z<49
+         if getmap(x+1,z+4)=1 then rx=x+1
+         if getmap(x+2,z+4)=1 then rx=x+2
+         if rx>-1 then rz=z+3
       endif
-      if rx=-1
-         if z<49
-            if getmap(x+1,z+4)=1 then rx=x+1
-            if getmap(x+2,z+4)=1 then rx=x+2
-            if rx>-1 then rz=z+3
-         endif
+   endif
+   if rz=-1
+      if x>1
+         if getmap(x-1,z+1)=1 then rz=z+1
+         if getmap(x-1,z+2)=1 then rz=z+2
+         if rz>-1 then rx=x
       endif
-      if rz=-1
-         if x>1
-            if getmap(x-1,z+1)=1 then rz=z+1
-            if getmap(x-1,z+2)=1 then rz=z+2
-            if rz>-1 then rx=x
-         endif
+   endif
+   if rz=-1
+      if x<49
+         if getmap(x+4,z+1)=1 then rz=z+1
+         if getmap(x+4,z+2)=1 then rz=z+2
+         if rz>-1 then rx=x+3
       endif
-      if rz=-1
-         if x<49
-            if getmap(x+4,z+1)=1 then rz=z+1
-            if getmap(x+4,z+2)=1 then rz=z+2
-            if rz>-1 then rx=x+3
-         endif
+   endif
+   if rz=-1
+      if getmap(x,z-1)=1 or getmap(x-1,z)=1
+         setmap(x,z,1)
+         rz=z
+         rx=x+1
       endif
-      if rz=-1
-         if getmap(x,z-1)=1 or getmap(x-1,z)=1
-            setmap(x,z,1)
-            rz=z
-            rx=x+1
-         endif
-         if getmap(x+3,z-1)=1 or getmap(x+4,z)=1
-            setmap(x+3,z,1)
-            rz=z+1
-            rx=x+3
-         endif
-         if getmap(x-1,z+3)=1 or getmap(x,z+4)=1
-            setmap(x,z+3,1)
-            rx=x
-            rz=z+2
-         endif
-         if getmap(x+4,z+3)=1 or getmap(x+3,z+4)=1
-            setmap(x+3,z+3,1)
-            rx=x+2
-            rz=z+3
-         endif
+      if getmap(x+3,z-1)=1 or getmap(x+4,z)=1
+         setmap(x+3,z,1)
+         rz=z+1
+         rx=x+3
       endif
-      rem *** door
-      setmap(rx,rz,31)
+      if getmap(x-1,z+3)=1 or getmap(x,z+4)=1
+         setmap(x,z+3,1)
+         rx=x
+         rz=z+2
+      endif
+      if getmap(x+4,z+3)=1 or getmap(x+3,z+4)=1
+         setmap(x+3,z+3,1)
+         rx=x+2
+         rz=z+3
+      endif
+   endif
+   rem *** door
+   setmap(rx,rz,31)
 return
 
 _check_pos:
@@ -1657,7 +1664,6 @@ _make_radar:
     cls
     for x=0 to mapx
        for z=0 to mapz
-          rem TODO: it would be good if the spacegate room was marked in a different color
           if getmap(x,z)>0 then box x*4, (mapz-z)*4, (x*4)+3, ((mapz-z)*4)+3
        next z
     next x
@@ -1671,7 +1677,6 @@ _make_radar:
     if setup=0 then make object plain 51,204,204
     lock object on 51
     
-rem    position object 51,-530,-340,800
     position object 51,-285,-190,500
 rem    ghost object on 51
     texture object 51,5
@@ -1781,7 +1786,6 @@ _make_floorplan:
     delete object 6
     make mesh from object 7,7
     delete object 7
-
 
     rem Recreate floor/roof as single object
     make object 2,2,1
@@ -2253,30 +2257,30 @@ return
 rem ** Functions
 rem add walls to object
 function addwall(rx,rz,objid,limbid,voffset)
-    if getmap(rx,rz+1)=0
-        add limb objid,limbid,1
-        rotate limb objid,limbid,0,180,0
-        offset limb objid,limbid,(rx*300)+150,voffset,(rz*300)+300
-        limbid=limbid+1
-    endif
-    if getmap(rx,rz-1)=0
-        add limb objid,limbid,1
-        rotate limb objid,limbid,0,0,0
-        offset limb objid,limbid,(rx*300)+150,voffset,(rz*300)
-        limbid=limbid+1
-    endif
-    if getmap(rx+1,rz)=0
-        add limb objid,limbid,1
-        rotate limb objid,limbid,0,270,0
-        offset limb objid,limbid,(rx*300)+300,voffset,(rz*300)+150
-        limbid=limbid+1
-    endif
-    if getmap(rx-1,rz)=0
-        add limb objid,limbid,1
-        rotate limb objid,limbid,0,90,0
-        offset limb objid,limbid,(rx*300),voffset,(rz*300)+150
-        limbid=limbid+1
-    endif
+   if getmap(rx,rz+1)=0
+      add limb objid,limbid,1
+      rotate limb objid,limbid,0,180,0
+      offset limb objid,limbid,(rx*300)+150,voffset,(rz*300)+300
+      limbid=limbid+1
+   endif
+   if getmap(rx,rz-1)=0
+      add limb objid,limbid,1
+      rotate limb objid,limbid,0,0,0
+      offset limb objid,limbid,(rx*300)+150,voffset,(rz*300)
+      limbid=limbid+1
+   endif
+   if getmap(rx+1,rz)=0
+      add limb objid,limbid,1
+      rotate limb objid,limbid,0,270,0
+      offset limb objid,limbid,(rx*300)+300,voffset,(rz*300)+150
+      limbid=limbid+1
+   endif
+   if getmap(rx-1,rz)=0
+      add limb objid,limbid,1
+      rotate limb objid,limbid,0,90,0
+      offset limb objid,limbid,(rx*300),voffset,(rz*300)+150
+      limbid=limbid+1
+   endif
 endfunction limbid
 
 function add_door(rx,rz)
@@ -2338,8 +2342,7 @@ function keepwithinmap(objid,snd)
    position object objid,x#,0,z#
 
    if hit=1 and fg_sound=1
-      if sound playing(4)
-      else
+      if not sound playing(4)
          play sound 4 : rem ooh.wav
       endif
    endif
