@@ -10,8 +10,6 @@ rem ---
 
 rem TODO: Various bugs found during playing:
 rem       - After death screen (if died from a sphere), the menu shows up with framerate 500 (you see the _fade_menu being extremely fast). But not always?
-rem       - Sphere only looks like it is cut in half. Is the picture not fully cut out from sphere1.bmp ? But get image t+300,... correctly uses width 146
-rem         Screenshot: sphere_looks_like_cut_in_half.jpg
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
 
@@ -1252,9 +1250,9 @@ _make_graves:
          delete image 11
          load bitmap "statues3.bmp",29
       endif
-      get image 9,0,0,127,255
-      get image 10,128,0,255,255
-      get image 11,256,0,382,255
+      get image 9,0,0,127,255,1
+      get image 10,128,0,255,255,1
+      get image 11,256,0,382,255,1
       delete bitmap 29
       g=9
       for t=1 to grave_max
@@ -1275,9 +1273,9 @@ _make_graves:
          hide object t+100
       next t
       load bitmap "statues.bmp",8
-      get image 9,0,0,127,255
-      get image 10,128,0,255,255
-      get image 11,256,0,382,255
+      get image 9,0,0,127,255,1
+      get image 10,128,0,255,255,1
+      get image 11,256,0,382,255,1
       delete bitmap 8
       g=9
       for k=1 to grave_max
@@ -1991,37 +1989,37 @@ _setup_textures:
       load bitmap "zombie.bmp",1
    endif
    for t=0 to 7
-      get image t+50,t*128,0,(t*128)+127,255
-      get image t+60,t*128,256,(t*128)+127,511
-      get image t+70,t*128,512,(t*128)+127,767
-      get image t+80,t*128,768,(t*128)+127,1023
+      get image t+50,t*128,0,(t*128)+127,255,1
+      get image t+60,t*128,256,(t*128)+127,511,1
+      get image t+70,t*128,512,(t*128)+127,767,1
+      get image t+80,t*128,768,(t*128)+127,1023,1
    next t
    delete bitmap 1
    rem dwarf
    if map_level=1
       load bitmap "dwarf.bmp",1
       for t=0 to 7
-         get image t+20,t*128,0,(t*128)+127,255
-         get image t+30,t*128,256,(t*128)+127,511
+         get image t+20,t*128,0,(t*128)+127,255,1
+         get image t+30,t*128,256,(t*128)+127,511,1
       next t
       delete bitmap 1
       rem death
       load bitmap "death.bmp",1
       for t=0 to 7
-         get image t+90,t*128,0,(t*128)+127,255
-         get image t+100,t*128,256,(t*128)+127,511
+         get image t+90,t*128,0,(t*128)+127,255,1
+         get image t+100,t*128,256,(t*128)+127,511,1
       next t
       delete bitmap 1
       rem make objects
       load bitmap "objects.bmp",1
       for t=0 to 7
-         get image t+110,t*64,0,(t*64)+63,63
-         get image t+120,t*64,64,(t*64)+63,127
-         get image t+130,t*64,128,(t*64)+63,195
-         get image t+140,t*64,196,(t*64)+63,255
+         get image t+110,t*64,0,(t*64)+63,63,1
+         get image t+120,t*64,64,(t*64)+63,127,1
+         get image t+130,t*64,128,(t*64)+63,195,1
+         get image t+140,t*64,196,(t*64)+63,255,1
       next t
-      get image 139,512,0,575,63
-      get image 138,512,64,575,127
+      get image 139,512,0,575,63,1
+      get image 138,512,64,575,127,1
       delete bitmap 1
       rem make monster shots
       for k=0 to 7
@@ -2087,7 +2085,7 @@ _setup_textures:
       endif
    endif
    for t=0 to 11
-      get image t+300,0,t*64,146,(t*64)+63
+      get image t+300,0,t*64,146,(t*64)+63,1
    next t
    delete bitmap 31
 
