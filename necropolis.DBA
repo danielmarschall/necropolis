@@ -356,8 +356,10 @@ _initialize:
    debug_info=0
    
    maptype=1 : rem 0=corridors 1=caves
-   
+
+   global bg_sound
    bg_sound=1 : rem rem sounds 0=off 1=on
+   global fg_sound
    fg_sound=1
 
    dim manshot(4)
@@ -482,8 +484,10 @@ return
 
 _thunder:
    if rnd(300)=200
-      ink rgb(255,0,0),rgb(255,255,255)
-      cls
+      rem ink rgb(255,0,0),rgb(255,255,255)
+      rem cls
+      cls rgb(255,255,255)
+      sleep 5
       sync
       if bg_sound=1
          if rnd(2)=1
@@ -587,7 +591,7 @@ _handle_player:
    endif
 
    rem Ensure player object stays within map
-   keepwithinmap(1,fg_sound)
+   keepwithinmap(1)
 
    if returnkey() or (joystick fire b()=1 and input_ctrl=1)
       x#=object position x(1)
@@ -1285,8 +1289,8 @@ _make_graves:
          set object 100+k,1,1,1
       next k
       t=1
-      for x=1 to 49
-         for z=1 to 49
+      for x=1 to mapx-1
+         for z=1 to mapz-1
             if getmap(x,z)>0
                if maptype<>1
                   if getmap(x,z)=4 and t<grave_num+1 and rnd(1)=1
@@ -1480,20 +1484,20 @@ _make_map_corridors:
    gosub _make_spacegate
 
    rem **** texture wals
-   for x=1 to 49
-      for y=1 to 49
+   for x=1 to mapx-1
+      for y=1 to mapz-1
          t=1
          gosub _check_pos
       next y
    next x
-   for x=1 to 49
-      for y=1 to 49
-         t=3
+   for x=1 to mapx-1
+      for y=1 to mapz-1
+         t=3 : rem TODO: really t=3? Not t=2?
          gosub _check_pos
       next y
    next x
-   for x=1 to 49
-      for y=1 to 49
+   for x=1 to mapx-1
+      for y=1 to mapz-1
          t=3
          gosub _check_pos
       next y
@@ -1537,7 +1541,7 @@ _make_spacegate:
       if rx>-1 then rz=z
    endif
    if rx=-1
-      if z<49
+      if z<mapz-1
          if getmap(x+1,z+4)=1 then rx=x+1
          if getmap(x+2,z+4)=1 then rx=x+2
          if rx>-1 then rz=z+3
@@ -1551,7 +1555,7 @@ _make_spacegate:
       endif
    endif
    if rz=-1
-      if x<49
+      if x<mapx-1
          if getmap(x+4,z+1)=1 then rz=z+1
          if getmap(x+4,z+2)=1 then rz=z+2
          if rz>-1 then rx=x+3
@@ -1808,9 +1812,9 @@ _make_walls:
    hide object 5
    voffset=150
    if map_level=1 then voffset=450
-    for rz=0 to mapx-1
+    for rz=0 to mapz-1
         gosub _show_map_make
-        for rx=0 to mapz-1
+        for rx=0 to mapx-1
             rem Create walls for this tile
             if map_level=1
                if getmap(rx,rz)=1 then limb=addwall(rx,rz,4,limb,voffset)
@@ -2071,7 +2075,6 @@ _setup_textures:
       endif
    endif
    rem ****  load sphere bitmap
-
    if map_level<8
       load bitmap "sphere1.bmp",31
       sphere_type=0
@@ -2183,7 +2186,6 @@ function monster_turn(k,x,z,mx,mz,t)
          until d>-1
       endif
       monsterdir(k-10)=d
-   else
    endif
 endfunction
 
@@ -2304,7 +2306,7 @@ function add_door(rx,rz)
 endfunction limbid
 
 rem Ensure player stays within floorplan
-function keepwithinmap(objid,snd)
+function keepwithinmap(objid)
    x#=object position x(objid)
    z#=object position z(objid)
    a#=object angle y(objid)
