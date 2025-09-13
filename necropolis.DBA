@@ -2,7 +2,7 @@ rem Necropolis - City of the Dead
 rem (C) 2000 Mavrick Designs
 rem Taken from the DB Demo CD, dated source code 24 January 2001
 rem Fixed by Daniel Marschall to make it compatible with DB Pro and to fix a bunch of bugs and problems.
-rem Revision: 12 September 2025
+rem Revision: 13 September 2025
 rem Current version here: https://github.com/danielmarschall/necropolis
 rem License: Freeware / Abandonware
 
@@ -162,8 +162,8 @@ _play_game:
    endif
    if object exist(2) then delete object 2
    if bg_sound=1 then set sound volume 1,0
-   if object exist(51) then delete object 51
-   if object exist(52) then delete object 52
+   if object exist(51) then hide object 51 : rem Hide Radar
+   if object exist(52) then hide object 52 : rem Hide HUD
 
    hide object 1
    if object exist(2) then hide object 2
@@ -348,36 +348,29 @@ _initialize:
    sound$="Sound On"
    keyb$="Keyboard"
 
-   setup=0
-   rem animations 0=off 1=on
-   anims=1
-
-   rem 0=keyboard 1=joystick+keyboard
-   input_ctrl=0
-
-   rem 0=full game 1=debugging on
-   global debug
+   setup=0   
+   anims=1 : rem animations 0=off 1=on
+   
+   input_ctrl=0 : rem 0=keyboard 1=joystick+keyboard
+   
+   global debug : rem 0=full game 1=debugging on
    debug=0
    global debug_info
    debug_info=0
    
-   rem 0=corridors 1=caves
-   maptype=1
-
-   rem sounds 0=off 1=on
-   bg_sound=1
+   maptype=1 : rem 0=corridors 1=caves
+   
+   bg_sound=1 : rem rem sounds 0=off 1=on
    fg_sound=1
 
    dim manshot(4)
    dim monstershot(8)
    dim monstershotdir(8)
-
-   rem 0=straight shoot 1=curved chaser
-   zombietype=0
-
-   rem gun type 0=none 1=shotgun 2=sawnoff 3=chainsaw
+   
+   zombietype=0 : rem 0=straight shoot 1=curved chaser
+   
    rem GUNS 2 and 3 NOT IMPLEMENTED!
-   mangun=1
+   mangun=1 : rem gun type 0=none 1=shotgun 2=sawnoff 3=chainsaw
 
    grave_max=28
    grave_num=grave_max
@@ -1670,7 +1663,7 @@ _make_radar:
     get image 5,0,0,204,204
     create bitmap 5,204,204
     if setup=0 then make object plain 51,204,204
-    lock object on 51 : rem xxx TODO: "object does not exist" when restart game with radar
+    lock object on 51
     
 rem    position object 51,-530,-340,800
     position object 51,-285,-190,500
@@ -1703,15 +1696,17 @@ _show_status:
 return
 
 _make_status:
-   create bitmap 10,300,25
-   make object plain 52,300,25
-   scale object 52,175,225,0
-   lock object on 52
-   position object 52,0,-415,800
-   old_life=0
-   old_ammo=0
-   old_shield=0
-   gosub _show_status
+   if setup=0
+      create bitmap 10,300,25
+      make object plain 52,300,25
+      scale object 52,175,225,0
+      lock object on 52
+      position object 52,0,-415,800
+      old_life=0
+      old_ammo=0
+      old_shield=0
+      gosub _show_status
+   endif
 return
 
 _make_floorplan:
