@@ -7,10 +7,6 @@ version$="2025-09-13" : rem Current version here: https://github.com/danielmarsc
 
 rem ---
 
-rem TODO: Various bugs found during playing:
-rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
-rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
-
 rem TODO: Things to check...
 rem       ... What happens (or is it possible) if the spacegate room is adjacent to 2 corridors?
 rem           - Check if the door will be at the 4th wall and the 3 other walls have the barrels
@@ -1245,6 +1241,12 @@ _make_level:
       show object 95
       if bg_sound=1 then loop sound 1 : rem rain.wav and wind.wav
    endif
+   for k=0 to monster_max
+      if object exist(10+k) 
+         rem Important, otherwise you will find still objects in level 4 (where monster_num is 0)
+         hide object 10+k
+      endif
+   next k
    for k=10 to monster_num+10
       if monster(k-10)>0 then show object k
    next k
@@ -2018,8 +2020,8 @@ _setup_textures:
       get image t+80,t*128,768,(t*128)+127,1023,1
    next t
    delete bitmap 1
-   rem dwarf
    if map_level=1
+      rem dwarf
       load bitmap "dwarf.bmp",1
       for t=0 to 7
          get image t+20,t*128,0,(t*128)+127,255,1
@@ -2314,26 +2316,22 @@ function add_door(rx,rz)
    rem hence it will fail in 3 out of 4 cases to create a door, since there might not be a connecting corridor (type 31)
    
    if (getmap(rx,rz+1)>0 and getmap(rx,rz+1)<5) or getmap(rx,rz+1)=31
-      debug_info=1
       create_door_obj()
       position object 400,(rx*300)+150,155,(rz*300)+300
    endif
    if (getmap(rx+1,rz)>0 and getmap(rx+1,rz)<5) or getmap(rx+1,rz)=31
-      debug_info=2
       create_door_obj()
       position object 400,(rx*300)+300,155,(rz*300)+150
-      rotate object 400,0,90,0
+      rotate object 400,0,90,0 : rem Angle 90=270, since the texture is on both sides
    endif
    if (getmap(rx,rz-1)>0 and getmap(rx,rz-1)<5) or getmap(rx,rz-1)=31
-      debug_info=3
       create_door_obj()
       position object 400,(rx*300)+150,155,(rz*300)
    endif
    if (getmap(rx-1,rz)>0 and getmap(rx-1,rz)<5) or getmap(rx-1,rz)=31
-      debug_info=4
       create_door_obj()
       position object 400,(rx*300),155,(rz*300)+150
-      rotate object 400,0,90,0
+      rotate object 400,0,90,0 : rem Angle 90=270, since the texture is on both sides
    endif
 endfunction limbid
 
