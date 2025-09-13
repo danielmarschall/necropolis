@@ -1362,16 +1362,15 @@ _make_map:
              if direction=1 then rx=rx-1
              if direction=2 then rz=rz+1
              if direction=3 then rz=rz-1
-             if rx>1 and rx<mapx-3 and rz>1 and rz<mapz-3
-                 setmap(rx,rz,1)
-                 rem xxx TODO: this might cause a problem in a very rare edge case:
-                 rem           if the (rx,rz) point goes outside the map and then comes back,
-                 rem           then the player might end up on a place that is not connected to
-                 rem           the rest of the map. Everything in the map most be connected together;
-                 rem           also because of the key item.
-                 manx=rx
-                 manz=rz
-             endif
+             
+             rem if rx>1 and rx<mapx-3 and rz>1 and rz<mapz-3 then setmap(rx,rz,1)
+             if rx < 2      then rx = 2
+             if rx > mapx-4 then rx = mapx-4
+             if rz < 2      then rz = 2
+             if rz > mapz-4 then rz = mapz-4
+             setmap(rx,rz,1)
+             manx=rx
+             manz=rz
          next t
 
          rem *** spacegate code 1
