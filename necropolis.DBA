@@ -12,8 +12,7 @@ rem TODO: Various bugs found during playing:
 rem       - After death screen (if died from a sphere), the menu shows up with framerate 500 (you see the _fade_menu being extremely fast). But not always?
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
-rem       - Door to spacegate room is suddenly invisible or missing! Debug shows that non of the 4 cases in add_door() applied
-rem         Screenshot: add_door_failed.jpg
+rem       - Zombie flesh hits the player => nearly makes no damage. Is the hit delay timer faulty?
 
 rem TODO: Things to check...
 rem       ... What happens if the spacegate room is adjacent to 2 corridors?
@@ -1047,6 +1046,7 @@ _make_objects:
 return
 
 _make_level:
+   debug_info=0
    rem **** setup level differences
    if map_level=4 and fg_sound=1
       load sound "tallman1.wav",101
@@ -2275,7 +2275,7 @@ function addwall(rx,rz,objid,limbid,voffset)
    endif
 endfunction limbid
 
-function add_door(rx,rz)
+function create_door_obj()
    if object exist(400) then delete object 400 : rem Important to avoid that rotation is carried over from previous level
    make object plain 400,302,302
    if wall_texture=1
@@ -2288,28 +2288,36 @@ function add_door(rx,rz)
       endif
    endif
    texture object 400,400
+   set object 400,1,1,0
+   hide object 400
+endfunction
+
+function add_door(rx,rz)
+   rem This method will be called for every spacegate coordinate (there are always 4, because the room has a size of 2x2).
+   rem hence it will fail in 3 out of 4 cases to create a door, since there might not be a connecting corridor (type 31)
    
-   debug_info=8
    if (getmap(rx,rz+1)>0 and getmap(rx,rz+1)<5) or getmap(rx,rz+1)=31
       debug_info=1
+      create_door_obj()
       position object 400,(rx*300)+150,155,(rz*300)+300
    endif
    if (getmap(rx+1,rz)>0 and getmap(rx+1,rz)<5) or getmap(rx+1,rz)=31
       debug_info=2
+      create_door_obj()
       position object 400,(rx*300)+300,155,(rz*300)+150
       rotate object 400,0,90,0
    endif
    if (getmap(rx,rz-1)>0 and getmap(rx,rz-1)<5) or getmap(rx,rz-1)=31
       debug_info=3
+      create_door_obj()
       position object 400,(rx*300)+150,155,(rz*300)
    endif
    if (getmap(rx-1,rz)>0 and getmap(rx-1,rz)<5) or getmap(rx-1,rz)=31
       debug_info=4
+      create_door_obj()
       position object 400,(rx*300),155,(rz*300)+150
       rotate object 400,0,90,0
    endif
-   set object 400,1,1,0
-   hide object 400
 endfunction limbid
 
 rem Ensure player stays within floorplan
