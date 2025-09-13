@@ -699,17 +699,16 @@ _handle_player:
         rem Full radar
         copy bitmap 6,5
       endif
-      rem TODO: man and sphere position can be one pixel off the path, depending if you walk at the left or right side of the corridor
       rem man position
       ink rgb(255,0,0),0
-      box mx,mz,mx+3,mz+3
+      box mx-2,mz+2,mx+2,mz+6
       rem sphere position
       if sphere_radar>0
          for k=0 to sphere_num
             ink rgb(255,255,0),0
             mx=(object position x(300+k)/300)*4
             mz=(mapz-(object position z(300+k)/300))*4
-            if (sphere_type<2) or (sphere_radar=2) then box mx,mz-3,mx+3,mz
+            if (sphere_type<2) or (sphere_radar=2) then box mx-2,mz+2,mx+2,mz+6
          next k
       endif
       rem copy bitmap to object for screen
@@ -1667,7 +1666,7 @@ _make_radar:
     cls
     for x=0 to mapx
        for z=0 to mapz
-          if getmap(x,z)>0 then box x*4, (mapz-z)*4, (x*4)+3, ((mapz-z)*4)+3
+          if getmap(x,z)>0 and (map_level>1 or getmap(x,z)<>2) then box x*4, (mapz-z)*4, (x*4)+3, ((mapz-z)*4)+3
        next z
     next x
 
