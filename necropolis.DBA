@@ -14,7 +14,6 @@ rem       - Sphere only looks like it is cut in half. Is the picture not fully c
 rem         Screenshot: sphere_looks_like_cut_in_half.jpg
 rem       - At the cave level (where statues3.bmp objects are), there are blank images as well as dwarf-pictures as objects
 rem         Screenshot: empty_and_dwarf_objects__no_enemies.jpg
-rem       - Sphere sound keeps looping during the loading screen of the next level
 
 rem TODO: Things to check...
 rem       ... What happens if the spacegate room is adjacent to 2 corridors?
@@ -161,7 +160,8 @@ _play_game:
       delete object 95
    endif
    if object exist(2) then delete object 2
-   if bg_sound=1 then set sound volume 1,0
+   stop sound 1 : rem Stop rain.wav or wind.wav
+   stop sound 99 : rem Stop sphere sound
    if object exist(51) then hide object 51 : rem Hide Radar
    if object exist(52) then hide object 52 : rem Hide HUD
 
@@ -436,8 +436,7 @@ _initialize:
 return
 
 _load_sounds:
-   rem TODO: Shouldn't monster and sphere sounds be 3D sounds bound to the objects?
-   rem Sound 1 will be loaded at _make_level with either rain.wav (level 1) or wind.wav (level 2+)
+   rem Sound 1 = rain.wav (level 1) or wind.wav (level 2+)
    load sound "thunder.wav",2
    load sound "thunder2.wav",3
    load sound "ooh.wav",4
@@ -581,6 +580,7 @@ _handle_player:
       if dx>-50 and dx<50 and dz>-50 and dz<50 then nxtlvl=1
    endif
    if nxtlvl=1
+      stop sound 99 : rem Stop sphere sound
       map_level=map_level+1
       make=0
       gosub _make_level
@@ -1618,7 +1618,7 @@ endfunction chk
 
 _show_map_make:
    if map_level=2 and make=0
-      stop sound 1
+      stop sound 1 : rem Stop rain.wav or wind.wav
       delete sound 1
       sync off : sync rate 0
 
@@ -2274,8 +2274,8 @@ function addwall(rx,rz,objid,limbid,voffset)
 endfunction limbid
 
 function add_door(rx,rz)
-   rem TODO: At cave levels, the doors are still rotated by 90 degree
-   rem       Screenshots: door_wrong_rotated1.jpg and door_wrong_rotated2.jpg
+   rem xxx TODO: At cave levels, the doors are still rotated by 90 degree
+   rem           Screenshots: door_wrong_rotated1.jpg and door_wrong_rotated2.jpg
 
    if object exist(400)
    else
