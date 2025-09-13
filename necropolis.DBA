@@ -572,6 +572,7 @@ _handle_player:
    animstate=1
    walkstate=14
    revstate=-14
+   prev_hit_timer=hit_timer
 
    if upkey()=1 or (joystick up()=1 and input_ctrl=1) then move object 1,walkstate : animstate=2
    if downkey()=1 or (joystick down()=1 and input_ctrl=1) then move object 1,revstate : animstate=2
@@ -1002,6 +1003,8 @@ _handle_player:
    endif
 
    gosub _show_status
+
+   if prev_hit_timer=hit_timer and hit_timer>0 then hit_timer=hit_timer-1 : rem allows the first attack after a pause be successful again (important for short contacts such as zombie flesh)
 return
 
 _make_objects:
