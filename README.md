@@ -1,7 +1,7 @@
 # Necropolis - City of the Dead
 
-Created in 2000 by Mavrick Designs, "Necropolis" is a horror game based on the movie Phantasm.
-It was developed in DarkBASIC and published for free on DarkBASIC Demo CDs.
+Created in 2000 by Mavrick Designs, "Necropolis" is a horror game based on the movie Phantasm (1979).
+It was developed in DarkBASIC and published as Freeware on some DarkBASIC Demo CDs.
 
 In 2025, I have ported the game to DarkBASIC Professional and fixed a BUNCH of bugs and problems,
 and also implemented some small improvements, such as showing the current level in the HUD.
