@@ -12,9 +12,9 @@ and also implemented some small improvements, such as showing the current level 
 
 ### Download and Installation
 
-- Necropolis can be downloaded here: https://github.com/danielmarschall/necropolis/releases
-- You need to install DirectX 9.0c. It is included in the game files of another game I have developed: https://github.com/danielmarschall/forest/archive/refs/heads/master.zip
-- After this, you just need to run Necropolis.exe
+- Downloaded Necropolis and DirectX 9.0c here: https://github.com/danielmarschall/necropolis/releases
+- Install DirectX 9.0c (you need this even if you have a newer version of DirectX installed). If Windows requests to install .Net Framework, accept that too.
+- After everything is installed, you just need to run Necropolis.exe to play the game
 
 ### Instructions
 
@@ -22,12 +22,12 @@ At the first level, you need to shoot enemies until one enemy drops the key. The
 
 In the next levels, you need to find the key (which is always on the floor) and go through the door in the spacegate room.
 
-Beginning with level 4, spheres will follow you. The silver spheres are slow, the golden ones are faster and the read ones are deadly and fast. Note that you can shoot them.
+Beginning with level 4, spheres will follow you. The silver spheres (level 4-7) are slow, the golden ones (level 8-11) are faster and the read ones (level >=12) are deadly and fast. Note that you can shoot them.
 
 ### Controls
 
 - Walk with the arrow keys
-- Shoot with Ctrl key
+- Shoot with the Ctrl key
 - Escape key closes the game
 
 ### Items
@@ -39,15 +39,21 @@ Beginning with level 4, spheres will follow you. The silver spheres are slow, th
 
 ### Radar
 
-If you have shot 60 enemies, you receive a radar which shows everything around you, but no spheres.
+If you have shot 60 enemies, then you receive a radar at the next stage. It will show everything around you, but no spheres.
 
 At 80 enemies, the radar will also show silver and golden spheres
 
-At 120 enemies, the radar will show everything, not just the area around you.
+At 120 enemies, the radar will show the whole map, not just the area around you.
 
 At 140 enemies, the radar will also show the red spheres.
 
 At the right top you can see the amount of enemies killed. Note that the counter does not reset when you restart after dying.
+
+## Development
+
+To compile and/or modify the game yourself, you need the following tools:
+
+- DarkBASIC Professional: Free version available at https://github.com/Dark-Basic-Software-Limited/Dark-Basic-Pro/releases/tag/12.02.16
 
 ## License
 

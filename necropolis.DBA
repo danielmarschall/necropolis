@@ -183,7 +183,7 @@ _play_game:
         if object exist(260+k) then hide object 260+k
     next k
     rem *** hide graves
-    for k=1 to grave_num
+    for k=0 to grave_num
         if object exist(100+k) then hide object 100+k
     next k
     rem *** hide spheres
@@ -939,7 +939,7 @@ _handle_player:
     if obtex=24 then obtex=0
     rem graves
     if level=0
-        for k=1 to grave_num
+        for k=0 to grave_num
             dx=object position x(100+k)-cx#
             dz=object position z(100+k)-cz#
             if dx+dz<2000
@@ -1154,7 +1154,7 @@ _make_level:
         _stop_warp(fg_sound)
     endif
 
-    if map_radar>0 then gosub _make_radar
+    gosub _make_radar
     gosub _make_graves
 
     gosub _sphere_position
@@ -1238,21 +1238,28 @@ _make_level:
         show object 95
         if bg_sound=1 then loop sound 1 : rem rain.wav and wind.wav
     endif
+
     for k=0 to monster_max
-        if object exist(10+k) 
-            rem Important, otherwise you will find still objects in level 4 (where monster_num is 0)
-            hide object 10+k
-        endif
+        if object exist(10+k) then hide object 10+k
     next k
     for k=0 to monster_num
         if monster(k)>0 then show object 10+k
     next k
-    for k=1 to grave_num
+
+    for k=0 to grave_max
+        if object exist(100+k) then hide object 100+k
+    next k
+    for k=0 to grave_num
         show object 100+k
+    next k
+
+    for k=0 to object_max
+        if objects(k)<>1 then hide object 260+k
     next k
     for k=0 to object_num
         if objects(k)=1 then show object 260+k
     next k
+
     show object 52
     setup=1
 return
@@ -1262,7 +1269,7 @@ _make_graves:
         if map_level=1
             load bitmap "graves.bmp",29
         else
-            for k=1 to grave_max
+            for k=0 to grave_max
                 hide object 100+k
             next k
             delete image 9
@@ -1275,7 +1282,7 @@ _make_graves:
         get image 11,256,0,382,255,1
         delete bitmap 29
         g=9
-        for k=1 to grave_max
+        for k=0 to grave_max
             if setup=0 then make object plain 100+k,80,160
             texture object 100+k,g
             g=g+1
@@ -1289,7 +1296,7 @@ _make_graves:
             hide object 100+k
         next k
     else
-        for k=1 to grave_max
+        for k=0 to grave_max
             hide object 100+k
         next k
         load bitmap "statues.bmp",8
@@ -1298,7 +1305,7 @@ _make_graves:
         get image 11,256,0,382,255,1
         delete bitmap 8
         g=9
-        for k=1 to grave_max
+        for k=0 to grave_max
             texture object 100+k,g
             g=g+1
             if g=12 then g=9
