@@ -8,6 +8,10 @@ and also implemented some small improvements, such as showing the current level 
 
 ![Game Title](game-title.png)
 
+## Let's play
+
+see [Let's play of Necropolis](https://youtu.be/hPutTdCUgAk)
+
 ## How to play
 
 ### Download and Installation
