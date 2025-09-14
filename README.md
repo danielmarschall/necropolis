@@ -16,7 +16,7 @@ see [Let's play of Necropolis](https://youtu.be/hPutTdCUgAk)
 
 ### Download and Installation
 
-- Downloaded Necropolis and DirectX 9.0c here: https://github.com/danielmarschall/necropolis/releases
+- Download Necropolis and DirectX 9.0c here: https://github.com/danielmarschall/necropolis/releases
 - Install DirectX 9.0c (you need this even if you have a newer version of DirectX installed). If Windows requests to install .Net Framework, accept that too.
 - After everything is installed, you just need to run Necropolis.exe to play the game
 
