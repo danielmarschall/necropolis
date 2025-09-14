@@ -2,7 +2,7 @@ Rem ***** Included Source File *****
 
 function _init_warp(snd)
     if snd=1
-        load sound "warp.wav",28
+        load sound "sound\warp.wav",28
         clone sound 29,28
         clone sound 30,28
         set sound speed 28,(rnd(80)*100)+8000
@@ -12,7 +12,7 @@ function _init_warp(snd)
         set sound pan 29,-10000
         set sound pan 30,10000
     endif
-    load image "plasma.bmp",89
+    load image "bitmap\plasma.bmp",89
     make object cylinder 93,100
     hide object 93
 

@@ -5,9 +5,9 @@ project name=Necropolis
 
 ; **** source file information ****
 main=necropolis.dba
-LineMain=1130
+LineMain=2337
 include1=warp.dba
-LineInclude1=25
+LineInclude1=72
 
 ; **** Executable Information  ***
 ; build types: exe, media, installer, alone
@@ -40,7 +40,7 @@ window resolution=640x480
 
 ; **** Media ****
 ; Example entries: media1=graphics\*.jpg
-media root path=D:\Git\necropolis\
+media root path=C:\Users\danie\Git\necropolis\
 
 ; **** Icons ****
 

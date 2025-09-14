@@ -44,13 +44,13 @@ _play_anim:
     sync off : sync rate 0
 
     if anim_number=1
-        load image "test.bmp",999
-        load animation "jl-phantasm.avi",1
+        load image "bitmap\intro.bmp",999
+        load animation "video\jl-phantasm.avi",1
         place animation 1,170,145,470,335
     endif
     if anim_number=2
-        load image "entering.bmp",999
-        load animation "level1.avi",1
+        load image "bitmap\entering.bmp",999
+        load animation "video\level1.avi",1
         place animation 1,129,110,510,370
     endif
 
@@ -83,7 +83,7 @@ _play_anim:
     rem Fading is not easily possible with IMAGE
     if anim_number=1
         sync on : sync rate 30
-        load bitmap "test.bmp",0
+        load bitmap "bitmap\intro.bmp",0
         for k=80 to 30 step -5
             fade bitmap 0,k
             sync : rem only 1 sync, otherwise flickering
@@ -105,7 +105,7 @@ return
 
 _setup_menu:
     sync off : sync rate 30
-    load image "game-title.bmp",999
+    load image "bitmap\game-title.bmp",999
     paste image 999,0,0
     rem menu selection variables
     set text font "times"
@@ -192,7 +192,7 @@ _play_game:
     next k
 
     sync off : sync rate 0
-    load image "game-title.bmp",999
+    load image "bitmap\game-title.bmp",999
     paste image 999,0,0
 
     rem menu selection variables
@@ -235,11 +235,11 @@ _get_menu:
                 if pos=0
                     gosub _play_game
                     sync off : sync rate 0
-                    load image "game-over.bmp",999
+                    load image "bitmap\game-over.bmp",999
                     paste image 999,0,0
                     sync
                     if fg_sound=1
-                        load sound "youdie.wav",107
+                        load sound "sound\youdie.wav",107
                         play sound 107
                     endif
                     repeat
@@ -441,35 +441,35 @@ _initialize:
 return
 
 _load_sounds:
-    rem Sound 1 = rain.wav (level 1) or wind.wav (level 2+)
-    load sound "thunder.wav",2
-    load sound "thunder2.wav",3
-    load sound "ooh.wav",4
-    load sound "ouch.wav",5
-    load sound "dw1.wav",10
-    load sound "dw2.wav",11
-    load sound "dw3.wav",12
-    load sound "dw4.wav",13
-    load sound "gurgle1.wav",14
-    load sound "gurgle2.wav",15
-    load sound "gurgle3.wav",16
-    load sound "grunt5.wav",17
-    load sound "grunt1.wav",18
-    load sound "grunt2.wav",19
-    load sound "grunt3.wav",20
-    load sound "grunt4.wav",21
-    load sound "shotgun1.wav",22 : rem TODO: this sound is useless, since it is never played!
-    load sound "shotgun2.wav",23
-    load sound "die1.wav",26
-    load sound "die2.wav",27
-    load sound "ammo.wav",40
-    load sound "health.wav",41
-    load sound "shield.wav",42
-    load sound "key.wav",43
-    load sound "sphere.wav",99
-    load sound "bang.wav",100
-    rem Sound 101 = tallman1.wav , only played once
-    rem Sound 107 = youdie.wav , only played once
+    rem Sound 1 = "sound\rain.wav" (level 1) or "sound\wind.wav" (level 2+)
+    load sound "sound\thunder.wav",2
+    load sound "sound\thunder2.wav",3
+    load sound "sound\ooh.wav",4
+    load sound "sound\ouch.wav",5
+    load sound "sound\dw1.wav",10
+    load sound "sound\dw2.wav",11
+    load sound "sound\dw3.wav",12
+    load sound "sound\dw4.wav",13
+    load sound "sound\gurgle1.wav",14
+    load sound "sound\gurgle2.wav",15
+    load sound "sound\gurgle3.wav",16
+    load sound "sound\grunt5.wav",17
+    load sound "sound\grunt1.wav",18
+    load sound "sound\grunt2.wav",19
+    load sound "sound\grunt3.wav",20
+    load sound "sound\grunt4.wav",21
+    load sound "sound\shotgun1.wav",22 : rem TODO: this sound is useless, since it is never played!
+    load sound "sound\shotgun2.wav",23
+    load sound "sound\die1.wav",26
+    load sound "sound\die2.wav",27
+    load sound "sound\ammo.wav",40
+    load sound "sound\health.wav",41
+    load sound "sound\shield.wav",42
+    load sound "sound\key.wav",43
+    load sound "sound\sphere.wav",99
+    load sound "sound\bang.wav",100
+    rem Sound 101 = "sound\tallman1.wav", only played once
+    rem Sound 107 = "sound\youdie.wav", only played once
 return
 
 rem decrease your shield and health
@@ -902,7 +902,7 @@ _handle_player:
                     if object_type(k)=2 : rem Player got the key item
                         pl_key=pl_key+1
                         if fg_sound=1 then play sound 43 : rem key.wav
-                        load image "status2.bmp",204
+                        load image "bitmap\status2.bmp",204
                         old_life=0 : rem Force _show_status to redraw
                         if map_level>1
                             for mmz=0 to mapz
@@ -912,12 +912,12 @@ _handle_player:
                             next mmz
                             rem Open door (transparent)
                             if wall_texture=1
-                                load image "wall10.bmp",400
+                                load image "bitmap\wall10.bmp",400
                             else
                                 if wall_texture=2
-                                    load image "wall17.bmp",400
+                                    load image "bitmap\wall17.bmp",400
                                 else
-                                    load image "wall12.bmp",400
+                                    load image "bitmap\wall12.bmp",400
                                 endif
                             endif
                             texture object 400,400
@@ -1056,7 +1056,7 @@ _make_level:
     debug_info=0
     rem **** setup level differences
     if map_level=4 and fg_sound=1
-        load sound "tallman1.wav",101
+        load sound "sound\tallman1.wav",101
         play sound 101
         repeat
             sync
@@ -1106,7 +1106,7 @@ _make_level:
         if not object exist(401)
             make object plain 401,128,128
         endif
-        load image "spgate.bmp",402
+        load image "bitmap\spgate.bmp",402
         texture object 401,402
         set object 401,1,1,0
         hide object 401
@@ -1210,16 +1210,16 @@ _make_level:
     if bg_sound=1
         if sound exist(1) then delete sound 1
         if map_level=1
-            load sound "rain.wav",1
+            load sound "sound\rain.wav",1
         else
-            load sound "wind.wav",1
+            load sound "sound\wind.wav",1
             set sound speed 1,1500
         endif
         loop sound 1
     endif
 
     rem ** Place player
-    load image "status.bmp",204
+    load image "bitmap\status.bmp",204
     old_life=0 : rem Force _show_status to redraw
     position object 1,(manx*300)+150,0,(manz*300)+150
     if map_level=1
@@ -1267,7 +1267,7 @@ return
 _make_graves:
     if map_level=1 or maptype=1
         if map_level=1
-            load bitmap "graves.bmp",29
+            load bitmap "bitmap\graves.bmp",29
         else
             for k=0 to grave_max
                 hide object 100+k
@@ -1275,7 +1275,7 @@ _make_graves:
             delete image 9
             delete image 10
             delete image 11
-            load bitmap "statues3.bmp",29
+            load bitmap "bitmap\statues3.bmp",29
         endif
         get image 9,0,0,127,255,1
         get image 10,128,0,255,255,1
@@ -1299,7 +1299,7 @@ _make_graves:
         for k=0 to grave_max
             hide object 100+k
         next k
-        load bitmap "statues.bmp",8
+        load bitmap "bitmap\statues.bmp",8
         get image 9,0,0,127,255,1
         get image 10,128,0,255,255,1
         get image 11,256,0,382,255,1
@@ -1345,8 +1345,8 @@ return
 _make_player:
     rem Load model and append animation data
     if setup=0
-        load object "idle.x",1 : tf1=total object frames(1)
-        append object "walk.x",1,1+tf1 : tf2=total object frames(1)
+        load object "model\idle.x",1 : tf1=total object frames(1)
+        append object "model\walk.x",1,1+tf1 : tf2=total object frames(1)
         yrotate object 1,180
         fix object pivot 1
         hide object 1
@@ -1663,7 +1663,7 @@ _show_map_make:
     endif
 
     rem Fix: Previously, we only loaded the bitmap when make=0. Now, we need to reload it, otherwise it flickers with DBPro. Sync does not help
-    load image "game-load.bmp",999
+    load image "bitmap\game-load.bmp",999
     paste image 999,0,0
     ink rgb(255,0,0),0
     box 90,359,90+(make*3.68),370
@@ -1929,62 +1929,62 @@ return
 _setup_textures:
     rem Floor texture
     if map_level=1
-        load image "grass08.bmp",1
+        load image "bitmap\grass08.bmp",1
     else
         if maptype=0
-            load image "floor01.bmp",1
+            load image "bitmap\floor01.bmp",1
         else
-            load image "stone-bottom.bmp",1
+            load image "bitmap\stone-bottom.bmp",1
         endif
-        load image "floor02.bmp",201
+        load image "bitmap\floor02.bmp",201
     endif
 
     rem ceiling texture
     if map_level=1
-        load image "ceiling02.bmp",3
+        load image "bitmap\ceiling02.bmp",3
     else
         if maptype=0
-            load image "ceiling01.bmp",3
+            load image "bitmap\ceiling01.bmp",3
         else
-            load image "stone-top.bmp",3
+            load image "bitmap\stone-top.bmp",3
         endif
-        load image "white-ceiling.bmp",202
+        load image "bitmap\white-ceiling.bmp",202
     endif
 
     rem Wall textures
     wall_texture=rnd(2)
     if maptype=0
         if wall_texture=1
-            load image "wall01.bmp",2
+            load image "bitmap\wall01.bmp",2
         else
             if wall_texture=2
-                load image "wall13.bmp",2
+                load image "bitmap\wall13.bmp",2
             else
-                load image "wall06.bmp",2
+                load image "bitmap\wall06.bmp",2
             endif
         endif
     else
         catacombe=catacombe+1
         if catacombe=2 then catacombe=0
         if catacombe=0
-            load image "stone01.bmp",2
+            load image "bitmap\stone01.bmp",2
         else
-            load image "sand01.bmp",2
+            load image "bitmap\sand01.bmp",2
         endif
     endif
 
     if map_level=1
-        load image "wall05.bmp",7
+        load image "bitmap\wall05.bmp",7
     else
-        load image "bar-white.bmp",203
+        load image "bitmap\bar-white.bmp",203
         if maptype=0
             if wall_texture=1
-                load image "wall02.bmp",7
+                load image "bitmap\wall02.bmp",7
             else
                 if wall_texture=2
-                    load image "wall14.bmp",7
+                    load image "bitmap\wall14.bmp",7
                 else
-                    load image "wall07.bmp",7
+                    load image "bitmap\wall07.bmp",7
                 endif
             endif
         endif
@@ -1992,29 +1992,29 @@ _setup_textures:
 
     if maptype=0
         if wall_texture=1
-            load image "wall03.bmp",8
+            load image "bitmap\wall03.bmp",8
         else
             if wall_texture=2
-                load image "wall15.bmp",8
+                load image "bitmap\wall15.bmp",8
             else
-                load image "wall08.bmp",8
+                load image "bitmap\wall08.bmp",8
             endif
         endif
     else
         if catacombe=0
-            if map_level>1 then load image "stone02.bmp",7
-            load image "stone03.bmp",8
+            if map_level>1 then load image "bitmap\stone02.bmp",7
+            load image "bitmap\stone03.bmp",8
         else
-            if map_level>1 then load image "sand02.bmp",7
-            load image "sand03.bmp",8
+            if map_level>1 then load image "bitmap\sand02.bmp",7
+            load image "bitmap\sand03.bmp",8
         endif
     endif
 
     rem zombie
     if zombietype=1
-        load bitmap "zombie2.bmp",1
+        load bitmap "bitmap\zombie2.bmp",1
     else
-        load bitmap "zombie.bmp",1
+        load bitmap "bitmap\zombie.bmp",1
     endif
     for t=0 to 7
         get image 50+t,t*128,0,(t*128)+127,255,1
@@ -2025,21 +2025,21 @@ _setup_textures:
     delete bitmap 1
     if map_level=1
         rem dwarf
-        load bitmap "dwarf.bmp",1
+        load bitmap "bitmap\dwarf.bmp",1
         for t=0 to 7
             get image 20+t,t*128,0,(t*128)+127,255,1
             get image 30+t,t*128,256,(t*128)+127,511,1
         next t
         delete bitmap 1
         rem death
-        load bitmap "death.bmp",1
+        load bitmap "bitmap\death.bmp",1
         for t=0 to 7
             get image 90+t,t*128,0,(t*128)+127,255,1
             get image 100+t,t*128,256,(t*128)+127,511,1
         next t
         delete bitmap 1
         rem make objects
-        load bitmap "objects.bmp",1
+        load bitmap "bitmap\objects.bmp",1
         for t=0 to 7
             get image 110+t,t*64,0,(t*64)+63,63,1
             get image 120+t,t*64,64,(t*64)+63,127,1
@@ -2082,8 +2082,8 @@ _setup_textures:
             delete object 96
             delete object 95
         endif
-        load object "house-frnt.x",96
-        load object "house-side.x",95
+        load object "model\house-frnt.x",96
+        load object "model\house-side.x",95
         scale object 96,300,300,240
         scale object 95,300,300,240
         xrotate object 96,90
@@ -2100,14 +2100,14 @@ _setup_textures:
     endif
     rem ****  load sphere bitmap
     if map_level<8
-        load bitmap "sphere1.bmp",31
+        load bitmap "bitmap\sphere1.bmp",31
         sphere_type=0
     else
         if map_level<12
-            load bitmap "sphere2.bmp",31
+            load bitmap "bitmap\sphere2.bmp",31
             sphere_type=1
         else
-            load bitmap "sphere3.bmp",31
+            load bitmap "bitmap\sphere3.bmp",31
             sphere_type=2
         endif
     endif
@@ -2301,12 +2301,12 @@ function create_door_obj()
     if object exist(400) then delete object 400 : rem Important to avoid that rotation is carried over from previous level
     make object plain 400,302,302
     if wall_texture=1
-        load image "wall09.bmp",400
+        load image "bitmap\wall09.bmp",400
     else
         if wall_texture=2
-            load image "wall16.bmp",400
+            load image "bitmap\wall16.bmp",400
         else
-            load image "wall11.bmp",400
+            load image "bitmap\wall11.bmp",400
         endif
     endif
     texture object 400,400
