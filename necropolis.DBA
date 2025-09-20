@@ -28,11 +28,13 @@ rem Fix: Changed from 16 to 32 bits, because 16 bits is not supported by some ha
 if not file exist("settings.dat")
     open to write 1, "settings.dat"
     rem Keep default settings in sync between Necropolis.dba and NecropolisLauncherMain.pas
-    write file 1, 640
-    write file 1, 480
-    write file 1, 32
-    write file 1, 1
-    write file 1, 0    
+    write file 1, 640 : rem Width
+    write file 1, 480 : rem Height
+    write file 1, 32  : rem Bits
+    write file 1, 1   : rem VSync
+    write file 1, 0   : rem Fullscreen
+    write file 1, 1   : rem Anims
+    write file 1, 0   : rem Debug
     close file 1
 endif
 
@@ -42,6 +44,8 @@ read file 1, height
 read file 1, colorbits
 read file 1, vsync
 read file 1, fullscreen
+read file 1, anims
+global debug : read file 1, debug
 close file 1
 
 set display mode width, height, colorbits, vsync
@@ -379,12 +383,9 @@ _initialize:
     keyb$="Keyboard"
 
     setup=0   
-    anims=1 : rem animations 0=off 1=on
 
     input_ctrl=0 : rem 0=keyboard 1=joystick+keyboard
 
-    global debug : rem 0=full game 1=debugging on
-    debug=0
     global debug_info
     debug_info=0
 

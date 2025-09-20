@@ -4284,7 +4284,7 @@ object MainForm: TMainForm
     Width = 169
     Height = 38
     Caption = 'Save and play game'
-    TabOrder = 3
+    TabOrder = 5
     OnClick = SaveAndPlayBtnClick
   end
   object Button1: TButton
@@ -4293,7 +4293,7 @@ object MainForm: TMainForm
     Width = 109
     Height = 40
     Caption = 'Reset to default'
-    TabOrder = 4
+    TabOrder = 6
     OnClick = Button1Click
   end
   object VSync: TCheckBox
@@ -4311,5 +4311,22 @@ object MainForm: TMainForm
     Height = 17
     Caption = 'Fullscreen'
     TabOrder = 2
+  end
+  object anims: TCheckBox
+    Left = 184
+    Top = 152
+    Width = 113
+    Height = 17
+    Caption = 'Play animations'
+    TabOrder = 3
+  end
+  object debug: TCheckBox
+    Left = 184
+    Top = 175
+    Width = 97
+    Height = 17
+    Caption = 'Debug mode'
+    TabOrder = 4
+    Visible = False
   end
 end

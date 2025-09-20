@@ -17,14 +17,14 @@ type
     Button1: TButton;
     VSync: TCheckBox;
     fullscreen: TCheckBox;
+    anims: TCheckBox;
+    debug: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure SaveAndPlayBtnClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
   private
     procedure LoadSettings;
-  public
-    seed_value: integer;
-    treeradius: DWord;
+    procedure SaveSettings;
   end;
 
 var
@@ -169,37 +169,8 @@ end;
 procedure TMainForm.SaveAndPlayBtnClick(Sender: TObject);
 resourcestring
   LNG_S_IsMissing = '%s is missing.';
-var
-  Parts: TArray<string>;
-  S: string;
-  a,b,c,d,e: DWORD;
-  fs: TFileStream;
 begin
-  {$REGION 'Save resolution'}
-
-  S := ComboBox1.Text;
-  Parts := S.Split(['x']);
-  if Length(Parts) = 3 then
-  begin
-    TryStrToInt(Parts[0], integer(a));
-    TryStrToInt(Parts[1], integer(b));
-    TryStrToInt(Parts[2], integer(c));
-  end;
-  d := BoolTo10(VSync.Checked);
-  e := BoolTo10(fullscreen.Checked);
-
-  fs := TFileStream.Create('settings.dat', fmCreate);
-  try
-    fs.WriteBuffer(a, SizeOf(a));
-    fs.WriteBuffer(b, SizeOf(b));
-    fs.WriteBuffer(c, SizeOf(c));
-    fs.WriteBuffer(d, SizeOf(d));
-    fs.WriteBuffer(e, SizeOf(e));
-  finally
-    FreeAndNil(fs);
-  end;
-
-  {$ENDREGION}
+  SaveSettings;
 
   {$REGION 'Check for DirectX 9.0c'}
   // These two DLL files are required by DBProSetupDebug.dll (that is unpacked into the Temp directory)
@@ -210,7 +181,7 @@ begin
      not FileExists(IncludeTrailingPathDelimiter(GetSysDir) + 'd3dx9_35.dll') then
   begin
     if MessageDlg('You need to install DirectX 9.0c in order to play this game. Download DirectX 9.0c now?', TMsgDlgType.mtInformation, mbYesNoCancel, 0) = mrYes then
-      ShellExecute(0, 'open', 'https://github.com/danielmarschall/Necropolis/releases', '', '', SW_NORMAL);
+      ShellExecute(0, 'open', 'https://github.com/danielmarschall/necropolis/releases', '', '', SW_NORMAL);
     Abort;
   end;
   {$ENDREGION}
@@ -225,6 +196,29 @@ begin
   {$ENDREGION}
 end;
 
+procedure TMainForm.SaveSettings;
+var
+  Parts: TArray<string>;
+  S: string;
+  tmp: DWORD;
+  fs: TFileStream;
+begin
+  fs := TFileStream.Create('settings.dat', fmCreate);
+  try
+    S := ComboBox1.Text;
+    Parts := S.Split(['x']);
+    TryStrToInt(Parts[0], integer(tmp)); fs.WriteBuffer(tmp, SizeOf(tmp));
+    TryStrToInt(Parts[1], integer(tmp)); fs.WriteBuffer(tmp, SizeOf(tmp));
+    TryStrToInt(Parts[2], integer(tmp)); fs.WriteBuffer(tmp, SizeOf(tmp));
+    tmp := BoolTo10(VSync.Checked);      fs.WriteBuffer(tmp, SizeOf(tmp));
+    tmp := BoolTo10(fullscreen.Checked); fs.WriteBuffer(tmp, SizeOf(tmp));
+    tmp := BoolTo10(anims.Checked);      fs.WriteBuffer(tmp, SizeOf(tmp));
+    tmp := BoolTo10(debug.Checked);      fs.WriteBuffer(tmp, SizeOf(tmp));
+  finally
+    FreeAndNil(fs);
+  end;
+end;
+
 procedure TMainForm.Button1Click(Sender: TObject);
 begin
   DeleteFile('settings.dat');
@@ -235,20 +229,20 @@ procedure TMainForm.LoadSettings;
 var
   Mode: TDisplayMode;
   idx: integer;
-  a,b,c,d,e: DWORD;
+  tmp: DWORD;
   fs: TFileStream;
 begin
-  {$REGION 'Select current chosen screen resolution'}
-
   if FileExists('settings.dat') then
   begin
     fs := TFileStream.Create('settings.dat', fmOpenRead or fmShareDenyWrite);
     try
-      fs.ReadBuffer(a, SizeOf(a));
-      fs.ReadBuffer(b, SizeOf(b));
-      fs.ReadBuffer(c, SizeOf(c));
-      fs.ReadBuffer(d, SizeOf(d));
-      fs.ReadBuffer(e, SizeOf(e));
+      fs.ReadBuffer(tmp, SizeOf(tmp)); Mode.Width  := tmp;
+      fs.ReadBuffer(tmp, SizeOf(tmp)); Mode.Height := tmp;
+      fs.ReadBuffer(tmp, SizeOf(tmp)); Mode.Bits   := tmp;
+      fs.ReadBuffer(tmp, SizeOf(tmp)); VSync.Checked      := tmp <> 0;
+      fs.ReadBuffer(tmp, SizeOf(tmp)); fullscreen.Checked := tmp <> 0;
+      fs.ReadBuffer(tmp, SizeOf(tmp)); anims.Checked      := tmp <> 0;
+      fs.ReadBuffer(tmp, SizeOf(tmp)); debug.Checked      := tmp <> 0;
     finally
       FreeAndNil(fs);
     end;
@@ -256,24 +250,18 @@ begin
   else
   begin
     // Keep default settings in sync between Necropolis.dba and NecropolisLauncherMain.pas
-    a := 640;
-    b := 480;
-    c := 32;
-    d := 1;
-    e := 0;
+    Mode.Width  := 640;
+    Mode.Height := 480;
+    Mode.Bits   := 32;
+    vsync.Checked      := true;
+    fullscreen.Checked := false;
+    anims.Checked      := true;
+    debug.Checked      := false;
   end;
 
-  Mode.Width  := a;
-  Mode.Height := b;
-  Mode.Bits   := c;
   idx := ComboBox1.Items.IndexOf(Mode.ToString);
   if idx = -1 then idx := 0;
   ComboBox1.ItemIndex := idx;
-
-  VSync.Checked := d <> 0;
-  fullscreen.Checked := e <> 0;
-
-  {$ENDREGION}
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -306,7 +294,12 @@ begin
   end;
   {$ENDREGION}
 
-  LoadSettings;
+  try
+    LoadSettings;
+  except
+    DeleteFile('settings.dat');
+    LoadSettings;
+  end;
 end;
 
 end.
