@@ -58,7 +58,9 @@ At the right top you can see the amount of enemies killed. Note that the counter
 
 To compile and/or modify the game yourself, you need the following tools:
 
-- DarkBASIC Professional: Free version available at https://github.com/Dark-Basic-Software-Limited/Dark-Basic-Pro/releases/tag/12.02.16
+- DarkBASIC Professional (for the game itself): Free version available at https://github.com/Dark-Basic-Software-Limited/Dark-Basic-Pro/releases/tag/12.02.16
+
+- Embarcadero Delphi (for the Launcher only): Free version available at https://www.embarcadero.com/de/products/delphi/starter (non-commercial use only)
 
 ## License
 
