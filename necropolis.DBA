@@ -15,7 +15,7 @@ rem         Or: there could be multiple doors, but that would be hard because we
 
 rem TODO: Nice to have for the future:
 rem - Monsters should not spawn beside the player, otherwise you might be instant dead at the first frames
-rem - Add high resolution
+rem - Add menu for higher resolutions than 640x480
 rem - Add 1st person view
 
 rem ---
@@ -170,14 +170,14 @@ _play_game:
         gosub _handle_player
         if map_level=1 then gosub _thunder
         ink rgb(255,255,255),0
-        text 570,8,"Level "+Str$(map_level)
-        text 570,24,"Kills: "+Str$(monsterkill)
+        text int(screen width()*0.89),8,"Level "+Str$(map_level)
+        text int(screen width()*0.89),24,"Kills: "+Str$(monsterkill)
         if debug=1
-            text 570,40,"Debug "+Str$(debug_info)
+            text int(screen width()*0.89),40,"Debug "+Str$(debug_info)
             remstart
             mx=(object position x(1)/300)*4
             mz=(object position z(1)/300)*4
-            text 570,56,"X "+Str$(mx)+" / Z "+Str$(mz)
+            text int(screen width()*0.89),56,"X "+Str$(mx)+" / Z "+Str$(mz)
             remend
         endif
         sync
@@ -1027,7 +1027,7 @@ _handle_player:
 
     if memo_num>0
         ink rgb(255,0,0),0
-        center text 320,410,memo$
+        center text int(screen width()*0.50),int(screen height()*0.85),memo$
         memo_num=memo_num-1
     endif
 

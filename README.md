@@ -4,7 +4,8 @@ Created in 2000 by Mavrick Designs, "Necropolis" is a horror game based on the m
 It was developed in DarkBASIC and published as Freeware on some DarkBASIC Demo CDs.
 
 In 2025, I have ported the game to DarkBASIC Professional and fixed a BUNCH of bugs and problems,
-and also implemented some small improvements, such as showing the current level in the HUD.
+and also implemented some small improvements, such as showing the current level in the HUD
+and implementing a launcher to choose the screen resolution and window mode.
 
 ![Game Title](game-title.png)
 
