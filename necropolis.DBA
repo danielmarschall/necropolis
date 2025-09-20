@@ -20,9 +20,6 @@ rem         I am not sure if add_door() will choose the same case 1,2,3,4 as _ma
 rem       - The player should only be able to enter through the door, not through other walls
 rem         Or: there could be multiple doors, but that would be hard because we only have one "object 400"
 
-rem TODO:
-rem - Settings that are changed in the game menu should also be saved to settings.dat
-
 rem TODO: Nice to have for the future:
 rem - Monsters should not spawn beside the player, otherwise you might be instant dead at the first frames
 rem - Add menu for higher resolutions than 640x480
@@ -33,34 +30,11 @@ rem ---
 rem Must not use #include, because DarkBASIC Pro IDE already includes it
 rem #include "warp.dba"
 
-rem Fix: Changed from 16 to 32 bits, because 16 bits is not supported by some hardware, such as AMD Radeon HD 7350
-
 if not file exist("settings.dat")
-    open to write 1, "settings.dat"
-    rem Keep default settings in sync between Necropolis.dba and NecropolisLauncherMain.pas
-    write file 1, 640 : rem width
-    write file 1, 480 : rem height
-    write file 1, 32  : rem colorbits
-    write file 1, 1   : rem vsync
-    write file 1, 0   : rem fullscreen
-    write file 1, 1   : rem anims
-    write file 1, 0   : rem debug
-    write file 1, 0   : rem input_ctrl=0 (keyboard)
-    write file 1, 1   : rem sound_ctrl=1 (on)
-    close file 1
+    gosub _default_config
+    gosub _write_config
 endif
-
-open to read 1, "settings.dat"
-read file 1, width
-read file 1, height
-read file 1, colorbits
-read file 1, vsync
-read file 1, fullscreen
-read file 1, anims
-global debug : read file 1, debug
-read file 1, input_ctrl
-read file 1, sound_ctrl
-close file 1
+gosub _read_config
 
 set display mode width, height, colorbits, vsync
 if fullscreen = 0
@@ -84,6 +58,47 @@ if anims=1 then gosub _play_anim
 
 gosub _main_program
 end
+
+_write_config:
+    open to write 1, "settings.dat"
+    write file 1, width
+    write file 1, height
+    write file 1, colorbits
+    write file 1, vsync
+    write file 1, fullscreen
+    write file 1, anims
+    write file 1, debug
+    write file 1, input_ctrl
+    write file 1, sound_ctrl
+    close file 1
+return
+
+_read_config:
+    open to read 1, "settings.dat"
+    read file 1, width
+    read file 1, height
+    read file 1, colorbits
+    read file 1, vsync
+    read file 1, fullscreen
+    read file 1, anims
+    global debug : read file 1, debug
+    read file 1, input_ctrl
+    read file 1, sound_ctrl
+    close file 1
+return
+
+_default_config:
+    rem Keep default settings in sync between Necropolis.dba and NecropolisLauncherMain.pas
+    width = 640
+    height = 480
+    colorbits = 32 : rem Fix: Changed from 16 to 32 bits, because 16 bits is not supported by some hardware, such as AMD Radeon HD 7350
+    vsync = 1
+    fullscreen = 0
+    anims = 1
+    debug = 0
+    input_ctrl = 0 : rem 0=keyboard, 1=keyboard+joystick
+    sound_ctrl = 1
+return
 
 _play_anim:
     sync off : sync rate 0
@@ -315,6 +330,7 @@ _get_menu:
                         fg_sound=1
                         bg_sound=1
                     endif
+                    gosub _write_config
                 endif
                 if pos=1
                     fade=-1
@@ -325,6 +341,7 @@ _get_menu:
                     else
                         input_ctrl=0
                     endif
+                    gosub _write_config
                 endif
             endif
         endif
