@@ -7,11 +7,21 @@ version$="2025-09-20" : rem Current version here: https://github.com/danielmarsc
 
 rem ---
 
+rem Important!!!
+rem There is a nasty bug in DarkBASIC: If a fullscreen game is minimized (Alt+Tab)
+rem or if the code calls "set window on" and "set window off", then all resources
+rem (images, objects, etc.) are gone. They need to be reloaded again.
+rem Since the game does not know when the game as minimized and restored, the models/images/sounds/...
+rem will be missing and the game crashes instantly. There is no solution at the moment.
+
 rem TODO: What happens (or is it possible at all?) if the spacegate room is adjacent to 2 corridors?
 rem       - Check if the door will be at the 4th wall and the 3 other walls have the barrels
 rem         I am not sure if add_door() will choose the same case 1,2,3,4 as _make_walls (spacegate walls = image 203)
 rem       - The player should only be able to enter through the door, not through other walls
 rem         Or: there could be multiple doors, but that would be hard because we only have one "object 400"
+
+rem TODO:
+rem - Settings that are changed in the game menu should also be saved to settings.dat
 
 rem TODO: Nice to have for the future:
 rem - Monsters should not spawn beside the player, otherwise you might be instant dead at the first frames
@@ -28,13 +38,15 @@ rem Fix: Changed from 16 to 32 bits, because 16 bits is not supported by some ha
 if not file exist("settings.dat")
     open to write 1, "settings.dat"
     rem Keep default settings in sync between Necropolis.dba and NecropolisLauncherMain.pas
-    write file 1, 640 : rem Width
-    write file 1, 480 : rem Height
-    write file 1, 32  : rem Bits
-    write file 1, 1   : rem VSync
-    write file 1, 0   : rem Fullscreen
-    write file 1, 1   : rem Anims
-    write file 1, 0   : rem Debug
+    write file 1, 640 : rem width
+    write file 1, 480 : rem height
+    write file 1, 32  : rem colorbits
+    write file 1, 1   : rem vsync
+    write file 1, 0   : rem fullscreen
+    write file 1, 1   : rem anims
+    write file 1, 0   : rem debug
+    write file 1, 0   : rem input_ctrl=0 (keyboard)
+    write file 1, 1   : rem sound_ctrl=1 (on)
     close file 1
 endif
 
@@ -46,6 +58,8 @@ read file 1, vsync
 read file 1, fullscreen
 read file 1, anims
 global debug : read file 1, debug
+read file 1, input_ctrl
+read file 1, sound_ctrl
 close file 1
 
 set display mode width, height, colorbits, vsync
@@ -292,12 +306,12 @@ _get_menu:
                     fade=-1
                     fadedir=0
                     gosub _fade_menu
-                    if sound$="Sound On"
-                        sound$="Sound Off"
+                    if sound_ctrl=1
+                        sound_ctrl=0
                         fg_sound=0
                         bg_sound=0
                     else
-                        sound$="Sound On"
+                        sound_ctrl=1
                         fg_sound=1
                         bg_sound=1
                     endif
@@ -306,11 +320,9 @@ _get_menu:
                     fade=-1
                     fadedir=0
                     gosub _fade_menu
-                    if keyb$="Keyboard"
-                        keyb$="Keyboard + Joystick"
+                    if input_ctrl=0
                         input_ctrl=1
                     else
-                        keyb$="Keyboard"
                         input_ctrl=0
                     endif
                 endif
@@ -349,9 +361,17 @@ _fade_menu:
         center text 320,280,"Quit Game"
     else
         if pos=0 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
-        center text 320,205,sound$
+        if sound_ctrl=1
+            center text 320,205,"Sound On"
+        else
+            center text 320,205,"Sound Off"
+        endif        
         if pos=1 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
-        center text 320,230,keyb$
+        if input_ctrl=1
+            center text 320,230,"Keyboard + Joystick"
+        else
+            center text 320,230,"Keyboard"
+        endif
         if pos=3 then ink rgb(fade,0,0),0 else ink rgb(100,0,0),0
         center text 320,280,"Main Menu"
     endif
@@ -378,13 +398,7 @@ return
 _initialize:
     randomize timer()
 
-    rem *** menu commands
-    sound$="Sound On"
-    keyb$="Keyboard"
-
     setup=0   
-
-    input_ctrl=0 : rem 0=keyboard 1=joystick+keyboard
 
     global debug_info
     debug_info=0

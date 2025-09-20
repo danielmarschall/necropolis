@@ -19,6 +19,9 @@ type
     fullscreen: TCheckBox;
     anims: TCheckBox;
     debug: TCheckBox;
+    input_ctrl: TComboBox;
+    Label2: TLabel;
+    sounds: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure SaveAndPlayBtnClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -214,6 +217,8 @@ begin
     tmp := BoolTo10(fullscreen.Checked); fs.WriteBuffer(tmp, SizeOf(tmp));
     tmp := BoolTo10(anims.Checked);      fs.WriteBuffer(tmp, SizeOf(tmp));
     tmp := BoolTo10(debug.Checked);      fs.WriteBuffer(tmp, SizeOf(tmp));
+    tmp := input_ctrl.ItemIndex;         fs.WriteBuffer(tmp, SizeOf(tmp));
+    tmp := BoolTo10(sounds.Checked);     fs.WriteBuffer(tmp, SizeOf(tmp));
   finally
     FreeAndNil(fs);
   end;
@@ -243,6 +248,8 @@ begin
       fs.ReadBuffer(tmp, SizeOf(tmp)); fullscreen.Checked := tmp <> 0;
       fs.ReadBuffer(tmp, SizeOf(tmp)); anims.Checked      := tmp <> 0;
       fs.ReadBuffer(tmp, SizeOf(tmp)); debug.Checked      := tmp <> 0;
+      fs.ReadBuffer(tmp, SizeOf(tmp)); input_ctrl.ItemIndex := tmp;
+      fs.ReadBuffer(tmp, SizeOf(tmp)); sounds.Checked := tmp <> 0;
     finally
       FreeAndNil(fs);
     end;
@@ -257,6 +264,8 @@ begin
     fullscreen.Checked := false;
     anims.Checked      := true;
     debug.Checked      := false;
+    input_ctrl.ItemIndex := 0; // keyboard
+    sounds.Checked := true;
   end;
 
   idx := ComboBox1.Items.IndexOf(Mode.ToString);

@@ -4270,6 +4270,13 @@ object MainForm: TMainForm
     Height = 15
     Caption = 'Window/Screen Resolution:'
   end
+  object Label2: TLabel
+    Left = 360
+    Top = 84
+    Width = 31
+    Height = 15
+    Caption = 'Input:'
+  end
   object ComboBox1: TComboBox
     Left = 184
     Top = 45
@@ -4284,7 +4291,7 @@ object MainForm: TMainForm
     Width = 169
     Height = 38
     Caption = 'Save and play game'
-    TabOrder = 5
+    TabOrder = 7
     OnClick = SaveAndPlayBtnClick
   end
   object Button1: TButton
@@ -4293,7 +4300,7 @@ object MainForm: TMainForm
     Width = 109
     Height = 40
     Caption = 'Reset to default'
-    TabOrder = 6
+    TabOrder = 8
     OnClick = Button1Click
   end
   object VSync: TCheckBox
@@ -4328,5 +4335,26 @@ object MainForm: TMainForm
     Caption = 'Debug mode'
     TabOrder = 4
     Visible = False
+  end
+  object input_ctrl: TComboBox
+    Left = 360
+    Top = 105
+    Width = 145
+    Height = 23
+    Style = csDropDownList
+    ItemIndex = 0
+    TabOrder = 5
+    Text = 'Keyboard'
+    Items.Strings = (
+      'Keyboard'
+      'Keyboard + Joystick')
+  end
+  object sounds: TCheckBox
+    Left = 360
+    Top = 152
+    Width = 81
+    Height = 17
+    Caption = 'Sounds'
+    TabOrder = 6
   end
 end
