@@ -3,7 +3,7 @@ rem (C) 2000 Mavrick Designs
 rem Taken from the DB Demo CD, dated source code 24 January 2001
 rem Fixed by Daniel Marschall to make it compatible with DB Pro and to fix a bunch of bugs and problems.
 rem License: Freeware / Abandonware
-version$="2025-09-14" : rem Current version here: https://github.com/danielmarschall/necropolis
+version$="2025-09-20" : rem Current version here: https://github.com/danielmarschall/necropolis
 
 rem ---
 
@@ -24,7 +24,34 @@ rem Must not use #include, because DarkBASIC Pro IDE already includes it
 rem #include "warp.dba"
 
 rem Fix: Changed from 16 to 32 bits, because 16 bits is not supported by some hardware, such as AMD Radeon HD 7350
-set display mode 640,480,32
+
+if not file exist("settings.dat")
+    open to write 1, "settings.dat"
+    rem Keep default settings in sync between Necropolis.dba and NecropolisLauncherMain.pas
+    write file 1, 640
+    write file 1, 480
+    write file 1, 32
+    write file 1, 1
+    write file 1, 0    
+    close file 1
+endif
+
+open to read 1, "settings.dat"
+read file 1, width
+read file 1, height
+read file 1, colorbits
+read file 1, vsync
+read file 1, fullscreen
+close file 1
+
+set display mode width, height, colorbits, vsync
+if fullscreen = 0
+    set window on
+    set window title "Necropolis - City of the Dead"
+    set window position int(desktop width()/2 - screen width()/2), int(desktop height()/2 - screen height()/2)
+else
+    set window off
+endif
 
 gosub _initialize
 _init_warp(fg_sound)

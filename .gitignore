@@ -5,3 +5,11 @@
 *.bak
 
 release
+
+settings.dat
+
+__history
+__recovery
+*.dcu
+*.local
+*.identcache
