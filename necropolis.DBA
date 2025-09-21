@@ -3,7 +3,7 @@ rem (C) 2000 Mavrick Designs
 rem Taken from the DB Demo CD, dated source code 24 January 2001
 rem Fixed by Daniel Marschall to make it compatible with DB Pro and to fix a bunch of bugs and problems.
 rem License: Freeware / Abandonware
-version$="2025-09-20" : rem Current version here: https://github.com/danielmarschall/necropolis
+version$="2025-09-21" : rem Current version here: https://github.com/danielmarschall/necropolis
 
 rem ---
 
@@ -1404,8 +1404,8 @@ return
 _make_player:
     rem Load model and append animation data
     if setup=0
-        load object "model\idle.x",1 : tf1=total object frames(1)
-        append object "model\walk.x",1,1+tf1 : tf2=total object frames(1)
+        load object "model\idle.dbo",1 : tf1=total object frames(1)
+        append object "model\walk.dbo",1,1+tf1 : tf2=total object frames(1)
         yrotate object 1,180
         fix object pivot 1
         hide object 1
@@ -2141,8 +2141,8 @@ _setup_textures:
             delete object 96
             delete object 95
         endif
-        load object "model\house-frnt.x",96
-        load object "model\house-side.x",95
+        load object "model\house-frnt.dbo",96
+        load object "model\house-side.dbo",95
         scale object 96,300,300,240
         scale object 95,300,300,240
         xrotate object 96,90
