@@ -60,6 +60,7 @@ gosub _main_program
 end
 
 _write_config:
+    if file exist("settings.dat") then delete file "settings.dat"
     open to write 1, "settings.dat"
     write file 1, width
     write file 1, height
