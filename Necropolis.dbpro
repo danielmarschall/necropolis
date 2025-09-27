@@ -5,14 +5,14 @@ project name=Necropolis
 
 ; **** source file information ****
 main=necropolis.dba
-LineMain=40
+LineMain=5
 include1=warp.dba
 LineInclude1=2
 
 ; **** Executable Information  ***
 ; build types: exe, media, installer, alone
 executable=Necropolis.exe
-build type=exe
+build type=alone
 ; ** Media file compression **
 compression=NO
 

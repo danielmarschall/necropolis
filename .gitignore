@@ -1,3 +1,6 @@
+*.PCK
+*.pck
+
 *.EXE
 *.exe
 
