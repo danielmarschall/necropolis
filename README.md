@@ -54,6 +54,10 @@ At 140 enemies, the radar will also show the red spheres.
 
 At the right top you can see the amount of enemies killed. Note that the counter does not reset when you restart after dying.
 
+## Known issues
+
+- If you are playing in fullscreen mode, you MUST NOT minimize the game (e.g. using Alt+Tab), otherwise the game will crash once the window is restored. (This is a bug in the DarkBASIC compiler)
+
 ## Development
 
 To compile and/or modify the game yourself, you need the following tools:
